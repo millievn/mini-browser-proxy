@@ -20,29 +20,30 @@ import net.lightbody.bmp.proxy.jetty.http.jmx.HttpHandlerMBean;
 import javax.management.MBeanException;
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.3 $
+
+/**
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.3 $
  */
-public class ResourceHandlerMBean extends HttpHandlerMBean  
-{
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     */
-    public ResourceHandlerMBean()
-        throws MBeanException
-    {}
-    
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("allowedMethods"); 
-        defineAttribute("dirAllowed"); 
-        defineAttribute("acceptRanges"); 
-        defineAttribute("redirectWelcome"); 
-        defineAttribute("minGzipLength"); 
-    }    
+public class ResourceHandlerMBean extends HttpHandlerMBean {
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public ResourceHandlerMBean()
+			throws MBeanException {
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("allowedMethods");
+		defineAttribute("dirAllowed");
+		defineAttribute("acceptRanges");
+		defineAttribute("redirectWelcome");
+		defineAttribute("minGzipLength");
+	}
 }

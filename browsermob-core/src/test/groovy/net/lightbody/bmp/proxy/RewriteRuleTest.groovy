@@ -33,8 +33,8 @@ class RewriteRuleTest extends MockServerTest {
                 .withQueryStringParameter("param1", "value1"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.rewriteUrl('http://www\\.(yahoo|bing)\\.com/\\?(\\w+)=(\\w+)', 'http://localhost:' + mockServerPort + '/?originalDomain=$1&$2=$3');
@@ -63,8 +63,8 @@ class RewriteRuleTest extends MockServerTest {
                 .withQueryStringParameter("firstValue", "value1"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.rewriteUrl('https://localhost:' + mockServerPort + '/\\?(\\w+)=(\\w+)', 'https://localhost:' + mockServerPort + '/?firstParam=$1&firstValue=$2');

@@ -17,28 +17,34 @@ package net.lightbody.bmp.proxy.jetty.html;
 
 
 /* -------------------------------------------------------------------- */
-/** HTML Script Block.
+
+/**
+ * HTML Script Block.
  */
-public class Script extends Block
-{
-    public static final String javascript = "JavaScript";
+public class Script extends Block {
+	public static final String javascript = "JavaScript";
 
-    /* ------------------------------------------------------------ */
-    /** Construct a script element.
-     * @param lang Language of Script */
-    public Script(String script, String lang)
-    {
-        super("script");
-        attribute("language",lang);
-        add(script);
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    /** Construct a JavaScript script element */
-    public Script(String script)
-    {
-        this(script, javascript);
-    }
+	/**
+	 * Construct a script element.
+	 *
+	 * @param lang Language of Script
+	 */
+	public Script(String script, String lang) {
+		super("script");
+		attribute("language", lang);
+		add(script);
+	}
+
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Construct a JavaScript script element
+	 */
+	public Script(String script) {
+		this(script, javascript);
+	}
 };
 
 

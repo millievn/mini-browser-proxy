@@ -18,31 +18,31 @@ import java.util.concurrent.TimeUnit;
  * {@link net.lightbody.bmp.proxy.dns.NativeCacheManipulatingResolver} for details.
  */
 public class NativeResolver extends AbstractHostNameRemapper implements AdvancedHostResolver {
-    private static final Logger log = LoggerFactory.getLogger(NativeResolver.class);
+	private static final Logger log = LoggerFactory.getLogger(NativeResolver.class);
 
-    @Override
-    public void clearDNSCache() {
-        log.debug("Cannot clear native JVM DNS Cache using this Resolver");
-    }
+	@Override
+	public void clearDNSCache() {
+		log.debug("Cannot clear native JVM DNS Cache using this Resolver");
+	}
 
-    @Override
-    public void setPositiveDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
-        log.debug("Cannot change native JVM DNS cache timeout using this Resolver");
-    }
+	@Override
+	public void setPositiveDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
+		log.debug("Cannot change native JVM DNS cache timeout using this Resolver");
+	}
 
-    @Override
-    public void setNegativeDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
-        log.debug("Cannot change native JVM DNS cache timeout using this Resolver");
-    }
+	@Override
+	public void setNegativeDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
+		log.debug("Cannot change native JVM DNS cache timeout using this Resolver");
+	}
 
-    @Override
-    public Collection<InetAddress> resolveRemapped(String remappedHost) {
-        try {
-            Collection<InetAddress> addresses = Arrays.asList(InetAddress.getAllByName(remappedHost));
+	@Override
+	public Collection<InetAddress> resolveRemapped(String remappedHost) {
+		try {
+			Collection<InetAddress> addresses = Arrays.asList(InetAddress.getAllByName(remappedHost));
 
-            return addresses;
-        } catch (UnknownHostException e) {
-            return Collections.emptyList();
-        }
-    }
+			return addresses;
+		} catch (UnknownHostException e) {
+			return Collections.emptyList();
+		}
+	}
 }

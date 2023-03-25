@@ -1,5 +1,5 @@
 {
-  "configuration" : {
+  "configuration": {
     "name": "test",
     "appenders": {
       "Console": {
@@ -10,7 +10,6 @@
         }
       }
     },
-
     "loggers": {
       "root": {
         "level": "info",

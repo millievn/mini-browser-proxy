@@ -9,23 +9,24 @@ import org.junit.After;
 import org.junit.Before;
 
 public abstract class ProxyManagerTest {
-    protected ProxyManager proxyManager;
-    
-    public abstract String[] getArgs();
-    
-    @Before
-    public void setUp() throws Exception {
-        Injector injector = Guice.createInjector(new ConfigModule(getArgs()));
-        proxyManager = injector.getInstance(ProxyManager.class);                    
-    }
+	protected ProxyManager proxyManager;
 
-    @After
-    public void tearDown() throws Exception {  
-        for(LegacyProxyServer p : proxyManager.get()){
-            try{
-                proxyManager.delete(p.getPort());
-            }catch(Exception e){ }
-        }                
-    }
+	public abstract String[] getArgs();
+
+	@Before
+	public void setUp() throws Exception {
+		Injector injector = Guice.createInjector(new ConfigModule(getArgs()));
+		proxyManager = injector.getInstance(ProxyManager.class);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		for (LegacyProxyServer p : proxyManager.get()) {
+			try {
+				proxyManager.delete(p.getPort());
+			} catch (Exception e) {
+			}
+		}
+	}
 
 }

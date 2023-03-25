@@ -16,9 +16,7 @@ import org.junit.Test
 import org.mockserver.matchers.Times
 
 import static org.hamcrest.Matchers.isEmptyOrNullString
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNull
-import static org.junit.Assert.assertThat
+import static org.junit.Assert.*
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 import static org.mockserver.model.HttpRequest.request
@@ -72,8 +70,8 @@ class WhitelistTest extends MockServerTest {
                 .withPath("/nonwhitelistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("should never be returned"))
+                        .withStatusCode(200)
+                        .withBody("should never be returned"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)
@@ -98,8 +96,8 @@ class WhitelistTest extends MockServerTest {
                 .withPath("/whitelistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("whitelisted"))
+                        .withStatusCode(200)
+                        .withBody("whitelisted"))
 
         proxy = new BrowserMobProxyServer()
         proxy.start()
@@ -123,8 +121,8 @@ class WhitelistTest extends MockServerTest {
                 .withPath("/whitelistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("whitelisted"))
+                        .withStatusCode(200)
+                        .withBody("whitelisted"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)
@@ -149,16 +147,16 @@ class WhitelistTest extends MockServerTest {
                 .withPath("/whitelistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("whitelisted"))
+                        .withStatusCode(200)
+                        .withBody("whitelisted"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/nonwhitelistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("should never be returned"))
+                        .withStatusCode(200)
+                        .withBody("should never be returned"))
 
         proxy = new BrowserMobProxyServer()
         proxy.start()
@@ -188,16 +186,16 @@ class WhitelistTest extends MockServerTest {
                 .withPath("/whitelistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("whitelisted"))
+                        .withStatusCode(200)
+                        .withBody("whitelisted"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/nonwhitelistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("should never be returned"))
+                        .withStatusCode(200)
+                        .withBody("should never be returned"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)

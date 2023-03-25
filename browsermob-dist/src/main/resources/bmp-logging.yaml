@@ -10,20 +10,17 @@ configuration:
       PatternLayout:
         pattern: "[%-5level %date{ISO8601} %logger] (%thread) %msg %xThrowable%n"
     file:
-      -
-        name: file
+      - name: file
         fileName: bmp.log
         PatternLayout:
           pattern: "[%-5level %date{ISO8601} %logger] (%thread) %msg %xThrowable%n"
         append: false
   loggers:
     logger:
-      -
-        name: net.lightbody.bmp.proxy.jetty.util.ThreadedServer
+      - name: net.lightbody.bmp.proxy.jetty.util.ThreadedServer
         level: warn
         additivity: false
-      -
-        name: net.lightbody.bmp
+      - name: net.lightbody.bmp
         # to suppress unwanted BMP logging statements, set the level below for the source logger to WARN or ERROR.
         # to enable more verbose logging, set the level to DEBUG or TRACE.
         level: info
@@ -31,7 +28,5 @@ configuration:
       # to suppress unwanted logging statements globally, set the level below to WARN or ERROR.
       level: info
       appender-ref:
-        -
-          ref: console
-        -
-          ref: file
+        - ref: console
+        - ref: file

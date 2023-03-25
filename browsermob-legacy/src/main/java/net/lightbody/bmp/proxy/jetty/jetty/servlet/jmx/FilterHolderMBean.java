@@ -21,29 +21,30 @@ import javax.management.MBeanException;
 
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.4 $
+
+/**
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.4 $
  */
-public class FilterHolderMBean extends HolderMBean 
-{
-    /* ------------------------------------------------------------ */
-    private FilterHolder _holder;
-    
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     */
-    public FilterHolderMBean()
-        throws MBeanException
-    {}
-    
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        _holder=(FilterHolder)getManagedResource();
-    }
-    
+public class FilterHolderMBean extends HolderMBean {
+	/* ------------------------------------------------------------ */
+	private FilterHolder _holder;
+
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public FilterHolderMBean()
+			throws MBeanException {
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		_holder = (FilterHolder) getManagedResource();
+	}
+
 }

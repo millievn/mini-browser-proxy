@@ -26,76 +26,76 @@ import org.java_bandwidthlimiter.StreamManager;
 public class TrustingSSLSocketFactory extends SSLConnectionSocketFactory {
 
 	public enum SSLAlgorithm {
-        SSLv3,
-        TLSv1
-    }
+		SSLv3,
+		TLSv1
+	}
 
-    private static SSLContext sslContext;
-    private StreamManager streamManager;
+	private static SSLContext sslContext;
+	private StreamManager streamManager;
 
-    static {
-        sslContext = SSLContexts.createDefault();
+	static {
+		sslContext = SSLContexts.createDefault();
 		try {
-			sslContext = SSLContexts.custom().loadTrustMaterial(null, 
-				new TrustStrategy() {
-					@Override
-				    public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-				        return true;
-				    }
-				}
+			sslContext = SSLContexts.custom().loadTrustMaterial(null,
+					new TrustStrategy() {
+						@Override
+						public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+							return true;
+						}
+					}
 			).build();
-			
+
 			sslContext.init(null, new TrustManager[]{new TrustEverythingSSLTrustManager()}, null);
 		} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
 			throw new RuntimeException("Unexpected key management error", e);
 		}
-    }
+	}
 
-    public TrustingSSLSocketFactory(StreamManager streamManager) {
-    	this(new AllowAllHostnameVerifier(), streamManager);
-    }
-    
-    public TrustingSSLSocketFactory(X509HostnameVerifier hostnameVerifier, StreamManager streamManager) {
-    	 super(sslContext, hostnameVerifier);
-         assert streamManager != null;
-         this.streamManager = streamManager;
-    }
-    
-    @Override
-    public Socket createSocket(HttpContext context) throws IOException {
-    	//creating an anonymous class deriving from socket
-        //we just need to override methods for connect to get some metrics
-        //and get-in-out streams to provide throttling
-        Socket newSocket = new SimulatedSocket(streamManager);
-        SimulatedSocketFactory.configure(newSocket);
+	public TrustingSSLSocketFactory(StreamManager streamManager) {
+		this(new AllowAllHostnameVerifier(), streamManager);
+	}
+
+	public TrustingSSLSocketFactory(X509HostnameVerifier hostnameVerifier, StreamManager streamManager) {
+		super(sslContext, hostnameVerifier);
+		assert streamManager != null;
+		this.streamManager = streamManager;
+	}
+
+	@Override
+	public Socket createSocket(HttpContext context) throws IOException {
+		//creating an anonymous class deriving from socket
+		//we just need to override methods for connect to get some metrics
+		//and get-in-out streams to provide throttling
+		Socket newSocket = new SimulatedSocket(streamManager);
+		SimulatedSocketFactory.configure(newSocket);
 		return newSocket;
-    }
-    
-    @Override
-    public Socket createLayeredSocket(final Socket socket, final String target, final int port, final HttpContext context) throws IOException {
-    	SSLSocket sslSocket = (SSLSocket) super.createLayeredSocket(socket, target, port, context);
+	}
+
+	@Override
+	public Socket createLayeredSocket(final Socket socket, final String target, final int port, final HttpContext context) throws IOException {
+		SSLSocket sslSocket = (SSLSocket) super.createLayeredSocket(socket, target, port, context);
 //    	sslSocket.setEnabledProtocols(new String[] { SSLAlgorithm.SSLv3.name(), SSLAlgorithm.TLSv1.name() } );
 //    	sslSocket.setEnabledCipherSuites(new String[] { "SSL_RSA_WITH_RC4_128_MD5" });
-    	return sslSocket;
-    }
-    
-    @Override
-    /**
-     * This function is call just before the handshake
-     * 
-     * @see http://hc.apache.org/httpcomponents-client-ga/httpclient/xref/org/apache/http/conn/ssl/SSLConnectionSocketFactory.html
-     */
-    protected void prepareSocket (SSLSocket socket) throws IOException {
-        // save this thread's RequestInfo, since it is stored in a ThreadLocal and the handshake completed event fires in a separate thread
-        final RequestInfo currentThreadRequestInfo = RequestInfo.get();
+		return sslSocket;
+	}
 
-	    socket.addHandshakeCompletedListener(new HandshakeCompletedListener() {
-	    	private final long handshakeStart = System.nanoTime();
-	    	
-	    	@Override
-	    	public void handshakeCompleted(HandshakeCompletedEvent handshakeCompletedEvent) {
-                currentThreadRequestInfo.ssl(handshakeStart, System.nanoTime());
-	    	}
-	    });
-    }
+	@Override
+	/**
+	 * This function is call just before the handshake
+	 *
+	 * @see http://hc.apache.org/httpcomponents-client-ga/httpclient/xref/org/apache/http/conn/ssl/SSLConnectionSocketFactory.html
+	 */
+	protected void prepareSocket(SSLSocket socket) throws IOException {
+		// save this thread's RequestInfo, since it is stored in a ThreadLocal and the handshake completed event fires in a separate thread
+		final RequestInfo currentThreadRequestInfo = RequestInfo.get();
+
+		socket.addHandshakeCompletedListener(new HandshakeCompletedListener() {
+			private final long handshakeStart = System.nanoTime();
+
+			@Override
+			public void handshakeCompleted(HandshakeCompletedEvent handshakeCompletedEvent) {
+				currentThreadRequestInfo.ssl(handshakeStart, System.nanoTime());
+			}
+		});
+	}
 }

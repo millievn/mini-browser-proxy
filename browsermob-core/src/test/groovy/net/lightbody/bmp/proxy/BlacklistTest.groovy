@@ -51,8 +51,8 @@ class BlacklistTest extends MockServerTest {
                 .withPath("/thisrequestshouldnotoccur"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(500)
-                .withBody("this URL should never be called"))
+                        .withStatusCode(500)
+                        .withBody("this URL should never be called"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)
@@ -77,16 +77,16 @@ class BlacklistTest extends MockServerTest {
                 .withPath("/blacklistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(500)
-                .withBody("this URL should never be called"))
+                        .withStatusCode(500)
+                        .withBody("this URL should never be called"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/nonblacklistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("not blacklisted"))
+                        .withStatusCode(200)
+                        .withBody("not blacklisted"))
 
         proxy = new BrowserMobProxyServer()
         proxy.start()
@@ -116,16 +116,16 @@ class BlacklistTest extends MockServerTest {
                 .withPath("/blacklistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(500)
-                .withBody("this URL should never be called"))
+                        .withStatusCode(500)
+                        .withBody("this URL should never be called"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/nonblacklistedresource"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("not blacklisted"))
+                        .withStatusCode(200)
+                        .withBody("not blacklisted"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)
@@ -156,8 +156,8 @@ class BlacklistTest extends MockServerTest {
                 .withPath("/blacklistconnect"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(500)
-                .withBody("this URL should never be called"))
+                        .withStatusCode(500)
+                        .withBody("this URL should never be called"))
 
         proxy = new BrowserMobProxyServer()
         proxy.start()
@@ -182,8 +182,8 @@ class BlacklistTest extends MockServerTest {
                 .withPath("/connectNotBlacklisted"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)

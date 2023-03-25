@@ -7,11 +7,11 @@ import java.io.IOException;
  * available on Java 8.)
  */
 public class UncheckedIOException extends RuntimeException {
-    public UncheckedIOException(String message, IOException cause) {
-        super(message, cause);
-    }
+	public UncheckedIOException(String message, IOException cause) {
+		super(message, cause);
+	}
 
-    public UncheckedIOException(IOException cause) {
-        super(cause);
-    }
+	public UncheckedIOException(IOException cause) {
+		super(cause);
+	}
 }

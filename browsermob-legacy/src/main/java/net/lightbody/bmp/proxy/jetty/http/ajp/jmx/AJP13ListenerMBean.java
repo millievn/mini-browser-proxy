@@ -20,28 +20,28 @@ import net.lightbody.bmp.proxy.jetty.http.jmx.HttpListenerMBean;
 import javax.management.MBeanException;
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.6 $
- * @author Greg Wilkins (gregw)
- */
-public class AJP13ListenerMBean extends HttpListenerMBean
-{
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     */
-    public AJP13ListenerMBean()
-        throws MBeanException
-    {
-        super();
-    }
 
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("identifyListener");
-        defineAttribute("remoteServers");
-    }
+/**
+ * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.6 $
+ */
+public class AJP13ListenerMBean extends HttpListenerMBean {
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public AJP13ListenerMBean()
+			throws MBeanException {
+		super();
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("identifyListener");
+		defineAttribute("remoteServers");
+	}
 }

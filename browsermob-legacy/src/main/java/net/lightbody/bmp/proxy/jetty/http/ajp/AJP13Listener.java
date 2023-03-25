@@ -26,6 +26,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /* ------------------------------------------------------------ */
+
 /**
  * AJP 1.3 Protocol Listener. This listener takes requests from the mod_jk or
  * mod_jk2 modules used by web servers such as apache and IIS to forward
@@ -33,338 +34,301 @@ import java.net.Socket;
  * <p>
  * This code uses the AJP13 code from tomcat3.3 as the protocol specification,
  * but is new implementation.
- * 
- * @version $Id: AJP13Listener.java,v 1.20 2006/10/08 14:13:05 gregwilkins Exp $
+ *
  * @author Greg Wilkins (gregw)
+ * @version $Id: AJP13Listener.java,v 1.20 2006/10/08 14:13:05 gregwilkins Exp $
  */
-public class AJP13Listener extends ThreadedServer implements HttpListener
-{
-    private static Log log=LogFactory.getLog(AJP13Listener.class);
+public class AJP13Listener extends ThreadedServer implements HttpListener {
+	private static Log log = LogFactory.getLog(AJP13Listener.class);
 
-    /* ------------------------------------------------------------------- */
-    private HttpServer _server;
-    private boolean _lastOut=false;
-    private boolean _lastLow=false;
-    private String _integralScheme=HttpMessage.__SSL_SCHEME;
-    private String _confidentialScheme=HttpMessage.__SSL_SCHEME;
-    private int _integralPort=0;
-    private int _confidentialPort=0;
-    private boolean _identifyListener=false;
-    private int _bufferSize=8192;
-    private int _bufferReserve=512;
-    private String[] _remoteServers;
-    private HttpHandler _handler;
+	/* ------------------------------------------------------------------- */
+	private HttpServer _server;
+	private boolean _lastOut = false;
+	private boolean _lastLow = false;
+	private String _integralScheme = HttpMessage.__SSL_SCHEME;
+	private String _confidentialScheme = HttpMessage.__SSL_SCHEME;
+	private int _integralPort = 0;
+	private int _confidentialPort = 0;
+	private boolean _identifyListener = false;
+	private int _bufferSize = 8192;
+	private int _bufferReserve = 512;
+	private String[] _remoteServers;
+	private HttpHandler _handler;
 
-    /* ------------------------------------------------------------------- */
-    public AJP13Listener()
-    {
-    }
+	/* ------------------------------------------------------------------- */
+	public AJP13Listener() {
+	}
 
-    /* ------------------------------------------------------------------- */
-    public AJP13Listener(InetAddrPort address)
-    {
-        super(address);
-    }
+	/* ------------------------------------------------------------------- */
+	public AJP13Listener(InetAddrPort address) {
+		super(address);
+	}
 
-    /* ------------------------------------------------------------ */
-    public void setHttpServer(HttpServer server)
-    {
-        _server=server;
-    }
+	/* ------------------------------------------------------------ */
+	public void setHttpServer(HttpServer server) {
+		_server = server;
+	}
 
-    /* ------------------------------------------------------------ */
-    public HttpServer getHttpServer()
-    {
-        return _server;
-    }
+	/* ------------------------------------------------------------ */
+	public HttpServer getHttpServer() {
+		return _server;
+	}
 
-    /* ------------------------------------------------------------ */
-    public int getBufferSize()
-    {
-        return _bufferSize;
-    }
+	/* ------------------------------------------------------------ */
+	public int getBufferSize() {
+		return _bufferSize;
+	}
 
-    /* ------------------------------------------------------------ */
-    public void setBufferSize(int size)
-    {
-        _bufferSize=size;
-        if (_bufferSize>8192)
-            log.warn("AJP Data buffer > 8192: "+size);
-    }
+	/* ------------------------------------------------------------ */
+	public void setBufferSize(int size) {
+		_bufferSize = size;
+		if (_bufferSize > 8192)
+			log.warn("AJP Data buffer > 8192: " + size);
+	}
 
-    /* ------------------------------------------------------------ */
-    public int getBufferReserve()
-    {
-        return _bufferReserve;
-    }
+	/* ------------------------------------------------------------ */
+	public int getBufferReserve() {
+		return _bufferReserve;
+	}
 
-    /* ------------------------------------------------------------ */
-    public void setBufferReserve(int size)
-    {
-        _bufferReserve=size;
-    }
+	/* ------------------------------------------------------------ */
+	public void setBufferReserve(int size) {
+		_bufferReserve = size;
+	}
 
-    /* ------------------------------------------------------------ */
-    public boolean getIdentifyListener()
-    {
-        return _identifyListener;
-    }
+	/* ------------------------------------------------------------ */
+	public boolean getIdentifyListener() {
+		return _identifyListener;
+	}
 
-    /* ------------------------------------------------------------ */
-    /**
-     * @param identifyListener
-     *            If true, the listener name is added to all requests as the
-     *            org.mortbay.http.HttListener attribute
-     */
-    public void setIdentifyListener(boolean identifyListener)
-    {
-        _identifyListener=identifyListener;
-    }
+	/* ------------------------------------------------------------ */
 
-    /* --------------------------------------------------------------- */
-    public String getDefaultScheme()
-    {
-        return HttpMessage.__SCHEME;
-    }
+	/**
+	 * @param identifyListener If true, the listener name is added to all requests as the
+	 *                         org.mortbay.http.HttListener attribute
+	 */
+	public void setIdentifyListener(boolean identifyListener) {
+		_identifyListener = identifyListener;
+	}
 
-    /* --------------------------------------------------------------- */
-    public void start() throws Exception
-    {
-        super.start();
-        log.info("Started AJP13Listener on "+getInetAddrPort());
-        log.info("NOTICE: AJP13 is not a secure protocol. Please protect the port "+getInetAddrPort());
-    }
+	/* --------------------------------------------------------------- */
+	public String getDefaultScheme() {
+		return HttpMessage.__SCHEME;
+	}
 
-    /* --------------------------------------------------------------- */
-    public void stop() throws InterruptedException
-    {
-        super.stop();
-        log.info("Stopped AJP13Listener on "+getInetAddrPort());
-    }
+	/* --------------------------------------------------------------- */
+	public void start() throws Exception {
+		super.start();
+		log.info("Started AJP13Listener on " + getInetAddrPort());
+		log.info("NOTICE: AJP13 is not a secure protocol. Please protect the port " + getInetAddrPort());
+	}
 
-    /* ------------------------------------------------------------ */
-    /**
-     * @return Array of accepted remote server hostnames or IPs.
-     */
-    public String[] getRemoteServers()
-    {
-        return _remoteServers;
-    }
+	/* --------------------------------------------------------------- */
+	public void stop() throws InterruptedException {
+		super.stop();
+		log.info("Stopped AJP13Listener on " + getInetAddrPort());
+	}
 
-    /* ------------------------------------------------------------ */
-    /**
-     * Set accepted remote servers. The AJP13 protocol is not secure and
-     * contains no authentication. If remote servers are set, then this listener
-     * will only accept connections from hosts with matching addresses or
-     * hostnames.
-     * 
-     * @param servers
-     *            Array of accepted remote server hostnames or IPs
-     */
-    public void setRemoteServers(String[] servers)
-    {
-        _remoteServers=servers;
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    /**
-     * Handle Job. Implementation of ThreadPool.handle(), calls
-     * handleConnection.
-     * 
-     * @param socket
-     *            A Connection.
-     */
-    public void handleConnection(Socket socket) throws IOException
-    {
-        // Check acceptable remote servers
-        if (_remoteServers!=null&&_remoteServers.length>0)
-        {
-            boolean match=false;
-            InetAddress inetAddress=socket.getInetAddress();
-            String hostAddr=inetAddress.getHostAddress();
-            String hostName=inetAddress.getHostName();
-            for (int i=0; i<_remoteServers.length; i++)
-            {
-                if (hostName.equals(_remoteServers[i])||hostAddr.equals(_remoteServers[i]))
-                {
-                    match=true;
-                    break;
-                }
-            }
-            if (!match)
-            {
-                log.warn("AJP13 Connection from un-approved host: "+inetAddress);
-                return;
-            }
-        }
+	/**
+	 * @return Array of accepted remote server hostnames or IPs.
+	 */
+	public String[] getRemoteServers() {
+		return _remoteServers;
+	}
 
-        // Handle the connection
-        socket.setTcpNoDelay(true);
-        socket.setSoTimeout(getMaxIdleTimeMs());
-        AJP13Connection connection=createConnection(socket);
-        try
-        {
-            connection.handle();
-        }
-        finally
-        {
-            connection.destroy();
-        }
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    /**
-     * Create an AJP13Connection instance. This method can be used to override
-     * the connection instance.
-     * 
-     * @param socket
-     *            The underlying socket.
-     */
-    protected AJP13Connection createConnection(Socket socket) throws IOException
-    {
-        return new AJP13Connection(this,socket.getInputStream(),socket.getOutputStream(),socket,getBufferSize());
-    }
+	/**
+	 * Set accepted remote servers. The AJP13 protocol is not secure and
+	 * contains no authentication. If remote servers are set, then this listener
+	 * will only accept connections from hosts with matching addresses or
+	 * hostnames.
+	 *
+	 * @param servers Array of accepted remote server hostnames or IPs
+	 */
+	public void setRemoteServers(String[] servers) {
+		_remoteServers = servers;
+	}
 
-    /* ------------------------------------------------------------ */
-    /**
-     * Customize the request from connection. This method extracts the socket
-     * from the connection and calls the customizeRequest(Socket,HttpRequest)
-     * method.
-     * 
-     * @param request
-     */
-    public void customizeRequest(HttpConnection connection, HttpRequest request)
-    {
-        if (_identifyListener)
-            request.setAttribute(ATTRIBUTE,getName());
+	/* ------------------------------------------------------------ */
 
-        Socket socket=(Socket)(connection.getConnection());
-        customizeRequest(socket,request);
-    }
+	/**
+	 * Handle Job. Implementation of ThreadPool.handle(), calls
+	 * handleConnection.
+	 *
+	 * @param socket A Connection.
+	 */
+	public void handleConnection(Socket socket) throws IOException {
+		// Check acceptable remote servers
+		if (_remoteServers != null && _remoteServers.length > 0) {
+			boolean match = false;
+			InetAddress inetAddress = socket.getInetAddress();
+			String hostAddr = inetAddress.getHostAddress();
+			String hostName = inetAddress.getHostName();
+			for (int i = 0; i < _remoteServers.length; i++) {
+				if (hostName.equals(_remoteServers[i]) || hostAddr.equals(_remoteServers[i])) {
+					match = true;
+					break;
+				}
+			}
+			if (!match) {
+				log.warn("AJP13 Connection from un-approved host: " + inetAddress);
+				return;
+			}
+		}
 
-    /* ------------------------------------------------------------ */
-    /**
-     * Customize request from socket. Derived versions of SocketListener may
-     * specialize this method to customize the request with attributes of the
-     * socket used (eg SSL session ids).
-     * 
-     * @param request
-     */
-    protected void customizeRequest(Socket socket, HttpRequest request)
-    {
-    }
+		// Handle the connection
+		socket.setTcpNoDelay(true);
+		socket.setSoTimeout(getMaxIdleTimeMs());
+		AJP13Connection connection = createConnection(socket);
+		try {
+			connection.handle();
+		} finally {
+			connection.destroy();
+		}
+	}
 
-    /* ------------------------------------------------------------ */
-    /**
-     * Persist the connection.
-     * 
-     * @param connection
-     */
-    public void persistConnection(HttpConnection connection)
-    {
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    /**
-     * @return True if low on idle threads.
-     */
-    public boolean isLowOnResources()
-    {
-        boolean low=getThreads()==getMaxThreads()&&getIdleThreads()<getMinThreads();
-        if (low&&!_lastLow)
-            log.info("LOW ON THREADS: "+this);
-        else if (!low&&_lastLow)
-        {
-            log.info("OK on threads: "+this);
-            _lastOut=false;
-        }
-        _lastLow=low;
-        return low;
-    }
+	/**
+	 * Create an AJP13Connection instance. This method can be used to override
+	 * the connection instance.
+	 *
+	 * @param socket The underlying socket.
+	 */
+	protected AJP13Connection createConnection(Socket socket) throws IOException {
+		return new AJP13Connection(this, socket.getInputStream(), socket.getOutputStream(), socket, getBufferSize());
+	}
 
-    /* ------------------------------------------------------------ */
-    /**
-     * @return True if out of resources.
-     */
-    public boolean isOutOfResources()
-    {
-        boolean out=getThreads()==getMaxThreads()&&getIdleThreads()==0;
-        if (out&&!_lastOut)
-            log.warn("OUT OF THREADS: "+this);
+	/* ------------------------------------------------------------ */
 
-        _lastOut=out;
-        return out;
-    }
+	/**
+	 * Customize the request from connection. This method extracts the socket
+	 * from the connection and calls the customizeRequest(Socket,HttpRequest)
+	 * method.
+	 *
+	 * @param request
+	 */
+	public void customizeRequest(HttpConnection connection, HttpRequest request) {
+		if (_identifyListener)
+			request.setAttribute(ATTRIBUTE, getName());
 
-    /* ------------------------------------------------------------ */
-    public boolean isIntegral(HttpConnection connection)
-    {
-        return ((AJP13Connection)connection).isSSL();
-    }
+		Socket socket = (Socket) (connection.getConnection());
+		customizeRequest(socket, request);
+	}
 
-    /* ------------------------------------------------------------ */
-    public boolean isConfidential(HttpConnection connection)
-    {
-        return ((AJP13Connection)connection).isSSL();
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    public String getIntegralScheme()
-    {
-        return _integralScheme;
-    }
+	/**
+	 * Customize request from socket. Derived versions of SocketListener may
+	 * specialize this method to customize the request with attributes of the
+	 * socket used (eg SSL session ids).
+	 *
+	 * @param request
+	 */
+	protected void customizeRequest(Socket socket, HttpRequest request) {
+	}
 
-    /* ------------------------------------------------------------ */
-    public void setIntegralScheme(String integralScheme)
-    {
-        _integralScheme=integralScheme;
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    public int getIntegralPort()
-    {
-        return _integralPort;
-    }
+	/**
+	 * Persist the connection.
+	 *
+	 * @param connection
+	 */
+	public void persistConnection(HttpConnection connection) {
+	}
 
-    /* ------------------------------------------------------------ */
-    public void setIntegralPort(int integralPort)
-    {
-        _integralPort=integralPort;
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    public String getConfidentialScheme()
-    {
-        return _confidentialScheme;
-    }
+	/**
+	 * @return True if low on idle threads.
+	 */
+	public boolean isLowOnResources() {
+		boolean low = getThreads() == getMaxThreads() && getIdleThreads() < getMinThreads();
+		if (low && !_lastLow)
+			log.info("LOW ON THREADS: " + this);
+		else if (!low && _lastLow) {
+			log.info("OK on threads: " + this);
+			_lastOut = false;
+		}
+		_lastLow = low;
+		return low;
+	}
 
-    /* ------------------------------------------------------------ */
-    public void setConfidentialScheme(String confidentialScheme)
-    {
-        _confidentialScheme=confidentialScheme;
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    public int getConfidentialPort()
-    {
-        return _confidentialPort;
-    }
+	/**
+	 * @return True if out of resources.
+	 */
+	public boolean isOutOfResources() {
+		boolean out = getThreads() == getMaxThreads() && getIdleThreads() == 0;
+		if (out && !_lastOut)
+			log.warn("OUT OF THREADS: " + this);
 
-    /* ------------------------------------------------------------ */
-    public void setConfidentialPort(int confidentialPort)
-    {
-        _confidentialPort=confidentialPort;
-    }
+		_lastOut = out;
+		return out;
+	}
 
-    /* ------------------------------------------------------------ */
-    public HttpHandler getHttpHandler()
-    {
-        return _handler;
-    }
+	/* ------------------------------------------------------------ */
+	public boolean isIntegral(HttpConnection connection) {
+		return ((AJP13Connection) connection).isSSL();
+	}
 
-    /* ------------------------------------------------------------ */
-    public void setHttpHandler(HttpHandler handler)
-    {
-        _handler=handler;
-    }
+	/* ------------------------------------------------------------ */
+	public boolean isConfidential(HttpConnection connection) {
+		return ((AJP13Connection) connection).isSSL();
+	}
+
+	/* ------------------------------------------------------------ */
+	public String getIntegralScheme() {
+		return _integralScheme;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void setIntegralScheme(String integralScheme) {
+		_integralScheme = integralScheme;
+	}
+
+	/* ------------------------------------------------------------ */
+	public int getIntegralPort() {
+		return _integralPort;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void setIntegralPort(int integralPort) {
+		_integralPort = integralPort;
+	}
+
+	/* ------------------------------------------------------------ */
+	public String getConfidentialScheme() {
+		return _confidentialScheme;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void setConfidentialScheme(String confidentialScheme) {
+		_confidentialScheme = confidentialScheme;
+	}
+
+	/* ------------------------------------------------------------ */
+	public int getConfidentialPort() {
+		return _confidentialPort;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void setConfidentialPort(int confidentialPort) {
+		_confidentialPort = confidentialPort;
+	}
+
+	/* ------------------------------------------------------------ */
+	public HttpHandler getHttpHandler() {
+		return _handler;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void setHttpHandler(HttpHandler handler) {
+		_handler = handler;
+	}
 }

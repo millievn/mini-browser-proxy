@@ -28,133 +28,127 @@ import javax.management.ObjectName;
 import java.io.IOException;
 
 /* ------------------------------------------------------------ */
-/** JettyServer MBean.
+
+/**
+ * JettyServer MBean.
  * This Model MBean class provides the mapping for HttpServer
  * management methods. It also registers itself as a membership
  * listener of the HttpServer, so it can create and destroy MBean
  * wrappers for listeners and contexts.
  *
- * @version $Revision: 1.12 $
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.12 $
  */
-public class ServerMBean extends HttpServerMBean
-{
-    private static Log log = LogFactory.getLog(ServerMBean.class);
+public class ServerMBean extends HttpServerMBean {
+	private static Log log = LogFactory.getLog(ServerMBean.class);
 
-    private Server _jettyServer;
-    private String _configuration;
+	private Server _jettyServer;
+	private String _configuration;
 
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     * @exception InstanceNotFoundException 
-     */
-    public ServerMBean(Server jettyServer)
-        throws MBeanException, InstanceNotFoundException
-    {
-        super(jettyServer);
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     * @exception InstanceNotFoundException 
-     */
-    public ServerMBean()
-        throws MBeanException, InstanceNotFoundException
-    {
-        this(new Server());
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 * @throws InstanceNotFoundException
+	 */
+	public ServerMBean(Server jettyServer)
+			throws MBeanException, InstanceNotFoundException {
+		super(jettyServer);
+	}
 
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @param configuration URL or File to jetty.xml style configuration file
-     * @exception IOException 
-     * @exception MBeanException 
-     * @exception InstanceNotFoundException 
-     */
-    public ServerMBean(String configuration)
-        throws IOException,MBeanException, InstanceNotFoundException
-    {
-        this(new Server());
-        _configuration=configuration;
-    }
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    protected ObjectName newObjectName(MBeanServer server)
-    {
-        return uniqueObjectName(server, getDefaultDomain()+":Server=");
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 * @throws InstanceNotFoundException
+	 */
+	public ServerMBean()
+			throws MBeanException, InstanceNotFoundException {
+		this(new Server());
+	}
 
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        
-        defineAttribute("configuration");
-        defineAttribute("rootWebApp");
-        defineAttribute("webApplicationConfigurationClassNames");
-        defineOperation("addWebApplication",
-                        new String[]{"java.lang.String",
-                                     "java.lang.String"},
-                        IMPACT_ACTION);
+	/* ------------------------------------------------------------ */
 
-        defineOperation("addWebApplication",
-                        new String[]{"java.lang.String",
-                                     "java.lang.String",
-                                     "java.lang.String"},
-                        IMPACT_ACTION);
-        defineOperation("addWebApplications",
-                        new String[]{"java.lang.String",
-                                     "java.lang.String"},
-                        IMPACT_ACTION);
-        _jettyServer=(Server)getManagedResource();
-    }
-    
-    
-    
-    /* ------------------------------------------------------------ */
-    /** 
-     * @param ok 
-     */
-    public void postRegister(Boolean ok)
-    {
-        super.postRegister(ok);
-        
-        if (ok.booleanValue())
-        {
-            if (_configuration!=null)
-            {
-                try
-                {
-                    _jettyServer.configure(_configuration);
-                    _jettyServer.start();
-                }
-                catch(Exception e)
-                {
-                    log.warn(LogSupport.EXCEPTION,e);
-                }
-            }
-        }
-    }
-    
-    /* ------------------------------------------------------------ */
-    public void postDeregister()
-    {
-        _configuration=null;   
-        try
-        {
-            if (null!=_jettyServer)
-                _jettyServer.stop();
-        }
-        catch(Exception e)
-        {
-            log.warn(e);
-        }
-        finally
-        {
-            super.postDeregister();
-        }
-        
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param configuration URL or File to jetty.xml style configuration file
+	 * @throws IOException
+	 * @throws MBeanException
+	 * @throws InstanceNotFoundException
+	 */
+	public ServerMBean(String configuration)
+			throws IOException, MBeanException, InstanceNotFoundException {
+		this(new Server());
+		_configuration = configuration;
+	}
+
+	/* ------------------------------------------------------------ */
+	protected ObjectName newObjectName(MBeanServer server) {
+		return uniqueObjectName(server, getDefaultDomain() + ":Server=");
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+
+		defineAttribute("configuration");
+		defineAttribute("rootWebApp");
+		defineAttribute("webApplicationConfigurationClassNames");
+		defineOperation("addWebApplication",
+				new String[]{"java.lang.String",
+						"java.lang.String"},
+				IMPACT_ACTION);
+
+		defineOperation("addWebApplication",
+				new String[]{"java.lang.String",
+						"java.lang.String",
+						"java.lang.String"},
+				IMPACT_ACTION);
+		defineOperation("addWebApplications",
+				new String[]{"java.lang.String",
+						"java.lang.String"},
+				IMPACT_ACTION);
+		_jettyServer = (Server) getManagedResource();
+	}
+
+
+
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * @param ok
+	 */
+	public void postRegister(Boolean ok) {
+		super.postRegister(ok);
+
+		if (ok.booleanValue()) {
+			if (_configuration != null) {
+				try {
+					_jettyServer.configure(_configuration);
+					_jettyServer.start();
+				} catch (Exception e) {
+					log.warn(LogSupport.EXCEPTION, e);
+				}
+			}
+		}
+	}
+
+	/* ------------------------------------------------------------ */
+	public void postDeregister() {
+		_configuration = null;
+		try {
+			if (null != _jettyServer)
+				_jettyServer.stop();
+		} catch (Exception e) {
+			log.warn(e);
+		} finally {
+			super.postDeregister();
+		}
+
+	}
 }

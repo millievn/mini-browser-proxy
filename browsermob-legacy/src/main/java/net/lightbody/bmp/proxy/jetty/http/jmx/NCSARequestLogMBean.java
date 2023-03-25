@@ -20,33 +20,34 @@ import net.lightbody.bmp.proxy.jetty.util.jmx.LifeCycleMBean;
 import javax.management.MBeanException;
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.7 $
- * @author Greg Wilkins (gregw)
- */
-public class NCSARequestLogMBean extends LifeCycleMBean
-{
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException
-     */
-    public NCSARequestLogMBean()
-        throws MBeanException
-    {}    
 
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("filename");
-        defineAttribute("datedFilename");
-        defineAttribute("logDateFormat");
-        defineAttribute("logTimeZone");
-        defineAttribute("retainDays");
-        defineAttribute("extended");
-        defineAttribute("logCookies");
-        defineAttribute("logLatency");
-        defineAttribute("append");
-    }
+/**
+ * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.7 $
+ */
+public class NCSARequestLogMBean extends LifeCycleMBean {
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public NCSARequestLogMBean()
+			throws MBeanException {
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("filename");
+		defineAttribute("datedFilename");
+		defineAttribute("logDateFormat");
+		defineAttribute("logTimeZone");
+		defineAttribute("retainDays");
+		defineAttribute("extended");
+		defineAttribute("logCookies");
+		defineAttribute("logLatency");
+		defineAttribute("append");
+	}
 }

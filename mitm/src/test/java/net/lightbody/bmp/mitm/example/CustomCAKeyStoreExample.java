@@ -12,28 +12,28 @@ import java.io.File;
  * from a custom KeyStore.
  */
 public class CustomCAKeyStoreExample {
-    public static void main(String[] args) {
-        // load the root certificate and private key from an existing KeyStore
-        KeyStoreFileCertificateSource fileCertificateSource = new KeyStoreFileCertificateSource(
-                "PKCS12",                               // KeyStore type. for .jks files (Java KeyStore), use "JKS"
-                new File("/path/to/my/keystore.p12"),
-                "keyAlias",                             // alias of the private key in the KeyStore; if you did not specify an alias when creating it, use "1"
-                "keystorePassword");
+	public static void main(String[] args) {
+		// load the root certificate and private key from an existing KeyStore
+		KeyStoreFileCertificateSource fileCertificateSource = new KeyStoreFileCertificateSource(
+				"PKCS12",                               // KeyStore type. for .jks files (Java KeyStore), use "JKS"
+				new File("/path/to/my/keystore.p12"),
+				"keyAlias",                             // alias of the private key in the KeyStore; if you did not specify an alias when creating it, use "1"
+				"keystorePassword");
 
 
-        // tell the MitmManager to use the custom certificate and private key
-        ImpersonatingMitmManager mitmManager = ImpersonatingMitmManager.builder()
-                .rootCertificateSource(fileCertificateSource)
-                .build();
+		// tell the MitmManager to use the custom certificate and private key
+		ImpersonatingMitmManager mitmManager = ImpersonatingMitmManager.builder()
+				.rootCertificateSource(fileCertificateSource)
+				.build();
 
-        // tell the HttpProxyServerBootstrap to use the new MitmManager
-        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
-                .withManInTheMiddle(mitmManager)
-                .start();
+		// tell the HttpProxyServerBootstrap to use the new MitmManager
+		HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+				.withManInTheMiddle(mitmManager)
+				.start();
 
-        // make your requests to the proxy server
-        //...
+		// make your requests to the proxy server
+		//...
 
-        proxyServer.abort();
-    }
+		proxyServer.abort();
+	}
 }

@@ -18,121 +18,121 @@ import java.util.regex.Pattern;
 
 /**
  * Describes the legacy BrowserMob Proxy 2.0 interface. Clients <b>should not</b> implement or use this interface.
- *
+ * <p>
  * Use {@link BrowserMobProxy}.
  */
 public interface LegacyProxyServer {
-    void start();
+	void start();
 
-    org.openqa.selenium.Proxy seleniumProxy() throws NameResolutionException;
+	org.openqa.selenium.Proxy seleniumProxy() throws NameResolutionException;
 
-    void cleanup();
+	void cleanup();
 
-    void stop();
+	void stop();
 
-    void abort();
+	void abort();
 
-    int getPort();
+	int getPort();
 
-    void setPort(int port);
+	void setPort(int port);
 
-    InetAddress getLocalHost();
+	InetAddress getLocalHost();
 
-    InetAddress getConnectableLocalHost() throws UnknownHostException;
+	InetAddress getConnectableLocalHost() throws UnknownHostException;
 
-    void setLocalHost(InetAddress localHost);
+	void setLocalHost(InetAddress localHost);
 
-    Har getHar();
+	Har getHar();
 
-    Har newHar(String initialPageRef);
+	Har newHar(String initialPageRef);
 
-    Har newHar(String initialPageRef, String initialPageTitle);
+	Har newHar(String initialPageRef, String initialPageTitle);
 
-    Har newPage(String pageRef);
+	Har newPage(String pageRef);
 
-    Har newPage(String pageRef, String pageTitle);
+	Har newPage(String pageRef, String pageTitle);
 
-    void endPage();
+	void endPage();
 
-    void setRetryCount(int count);
+	void setRetryCount(int count);
 
-    void remapHost(String source, String target);
+	void remapHost(String source, String target);
 
-    @Deprecated
-    void addRequestInterceptor(HttpRequestInterceptor i);
+	@Deprecated
+	void addRequestInterceptor(HttpRequestInterceptor i);
 
-    void addRequestInterceptor(RequestInterceptor interceptor);
+	void addRequestInterceptor(RequestInterceptor interceptor);
 
-    @Deprecated
-    void addResponseInterceptor(HttpResponseInterceptor i);
+	@Deprecated
+	void addResponseInterceptor(HttpResponseInterceptor i);
 
-    void addResponseInterceptor(ResponseInterceptor interceptor);
+	void addResponseInterceptor(ResponseInterceptor interceptor);
 
-    StreamManager getStreamManager();
+	StreamManager getStreamManager();
 
-    //use getStreamManager().setDownstreamKbps instead
-    @Deprecated
-    void setDownstreamKbps(long downstreamKbps);
+	//use getStreamManager().setDownstreamKbps instead
+	@Deprecated
+	void setDownstreamKbps(long downstreamKbps);
 
-    //use getStreamManager().setUpstreamKbps instead
-    @Deprecated
-    void setUpstreamKbps(long upstreamKbps);
+	//use getStreamManager().setUpstreamKbps instead
+	@Deprecated
+	void setUpstreamKbps(long upstreamKbps);
 
-    //use getStreamManager().setLatency instead
-    @Deprecated
-    void setLatency(long latency);
+	//use getStreamManager().setLatency instead
+	@Deprecated
+	void setLatency(long latency);
 
-    void setRequestTimeout(int requestTimeout);
+	void setRequestTimeout(int requestTimeout);
 
-    void setSocketOperationTimeout(int readTimeout);
+	void setSocketOperationTimeout(int readTimeout);
 
-    void setConnectionTimeout(int connectionTimeout);
+	void setConnectionTimeout(int connectionTimeout);
 
-    void autoBasicAuthorization(String domain, String username, String password);
+	void autoBasicAuthorization(String domain, String username, String password);
 
-    void rewriteUrl(String match, String replace);
+	void rewriteUrl(String match, String replace);
 
-    void clearRewriteRules();
+	void clearRewriteRules();
 
-    void blacklistRequests(String pattern, int responseCode);
+	void blacklistRequests(String pattern, int responseCode);
 
-    void blacklistRequests(String pattern, int responseCode, String method);
+	void blacklistRequests(String pattern, int responseCode, String method);
 
-    @Deprecated
-    List<BlacklistEntry> getBlacklistedRequests();
+	@Deprecated
+	List<BlacklistEntry> getBlacklistedRequests();
 
-    Collection<BlacklistEntry> getBlacklistedUrls();
+	Collection<BlacklistEntry> getBlacklistedUrls();
 
-    boolean isWhitelistEnabled();
+	boolean isWhitelistEnabled();
 
-    @Deprecated
-    List<Pattern> getWhitelistRequests();
+	@Deprecated
+	List<Pattern> getWhitelistRequests();
 
-    Collection<String> getWhitelistUrls();
+	Collection<String> getWhitelistUrls();
 
-    int getWhitelistResponseCode();
+	int getWhitelistResponseCode();
 
-    void clearBlacklist();
+	void clearBlacklist();
 
-    void whitelistRequests(String[] patterns, int responseCode);
+	void whitelistRequests(String[] patterns, int responseCode);
 
-    void enableEmptyWhitelist(int responseCode);
+	void enableEmptyWhitelist(int responseCode);
 
-    void clearWhitelist();
+	void clearWhitelist();
 
-    void addHeader(String name, String value);
+	void addHeader(String name, String value);
 
-    void setCaptureHeaders(boolean captureHeaders);
+	void setCaptureHeaders(boolean captureHeaders);
 
-    void setCaptureContent(boolean captureContent);
+	void setCaptureContent(boolean captureContent);
 
-    void setCaptureBinaryContent(boolean captureBinaryContent);
+	void setCaptureBinaryContent(boolean captureBinaryContent);
 
-    void clearDNSCache();
+	void clearDNSCache();
 
-    void setDNSCacheTimeout(int timeout);
+	void setDNSCacheTimeout(int timeout);
 
-    void waitForNetworkTrafficToStop(long quietPeriodInMs, long timeoutInMs);
+	void waitForNetworkTrafficToStop(long quietPeriodInMs, long timeoutInMs);
 
-    void setOptions(Map<String, String> options);
+	void setOptions(Map<String, String> options);
 }

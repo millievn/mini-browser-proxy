@@ -34,8 +34,8 @@ class AutoAuthTest extends MockServerTest {
                 .withHeader("Authorization", "Basic dGVzdFVzZXJuYW1lOnRlc3RQYXNzd29yZA=="),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.autoAuthorization("localhost", "testUsername", "testPassword", AuthType.BASIC)
@@ -57,8 +57,8 @@ class AutoAuthTest extends MockServerTest {
                 .withHeader("Authorization", "Basic dGVzdFVzZXJuYW1lOnRlc3RQYXNzd29yZA=="),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.autoAuthorization("localhost", "testUsername", "testPassword", AuthType.BASIC)
@@ -77,12 +77,12 @@ class AutoAuthTest extends MockServerTest {
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/basicAuthHttp")
-                // require that the Auth header NOT be present
+        // require that the Auth header NOT be present
                 .withHeader(NottableString.not("Authorization"), NottableString.not("Basic dGVzdFVzZXJuYW1lOnRlc3RQYXNzd29yZA==")),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.autoAuthorization("localhost", "testUsername", "testPassword", AuthType.BASIC)

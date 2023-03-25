@@ -11,20 +11,20 @@ import org.littleshoot.proxy.HttpFiltersAdapter;
  * Registers this request with the {@link net.lightbody.bmp.proxy.ActivityMonitor} when the HttpRequest is received from the client.
  */
 public class RegisterRequestFilter extends HttpFiltersAdapter {
-    private final ActivityMonitor activityMonitor;
+	private final ActivityMonitor activityMonitor;
 
-    public RegisterRequestFilter(HttpRequest originalRequest, ChannelHandlerContext ctx, ActivityMonitor activityMonitor) {
-        super(originalRequest, ctx);
+	public RegisterRequestFilter(HttpRequest originalRequest, ChannelHandlerContext ctx, ActivityMonitor activityMonitor) {
+		super(originalRequest, ctx);
 
-        this.activityMonitor = activityMonitor;
-    }
+		this.activityMonitor = activityMonitor;
+	}
 
-    @Override
-    public HttpResponse clientToProxyRequest(HttpObject httpObject) {
-        if (httpObject instanceof HttpRequest) {
-            activityMonitor.requestStarted();
-        }
+	@Override
+	public HttpResponse clientToProxyRequest(HttpObject httpObject) {
+		if (httpObject instanceof HttpRequest) {
+			activityMonitor.requestStarted();
+		}
 
-        return super.clientToProxyRequest(httpObject);
-    }
+		return super.clientToProxyRequest(httpObject);
+	}
 }

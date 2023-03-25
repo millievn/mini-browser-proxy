@@ -14,34 +14,34 @@ import java.io.File;
  * certificates.
  */
 public class EllipticCurveCAandServerExample {
-    public static void main(String[] args) {
-        // create a dyamic CA root certificate generator using Elliptic Curve keys
-        RootCertificateGenerator ecRootCertificateGenerator = RootCertificateGenerator.builder()
-                .keyGenerator(new ECKeyGenerator())     // use EC keys, instead of the default RSA
-                .build();
+	public static void main(String[] args) {
+		// create a dyamic CA root certificate generator using Elliptic Curve keys
+		RootCertificateGenerator ecRootCertificateGenerator = RootCertificateGenerator.builder()
+				.keyGenerator(new ECKeyGenerator())     // use EC keys, instead of the default RSA
+				.build();
 
-        // save the dynamically-generated CA root certificate for installation in a browser
-        ecRootCertificateGenerator.saveRootCertificateAsPemFile(new File("/tmp/my-dynamic-ca.cer"));
+		// save the dynamically-generated CA root certificate for installation in a browser
+		ecRootCertificateGenerator.saveRootCertificateAsPemFile(new File("/tmp/my-dynamic-ca.cer"));
 
-        // save the dynamically-generated CA private key for use in future LittleProxy executions
-        // (see CustomCAPemFileExample.java for an example loading a previously-generated CA cert + key from a PEM file)
-        ecRootCertificateGenerator.savePrivateKeyAsPemFile(new File("/tmp/my-ec-private-key.pem"), "secretPassword");
+		// save the dynamically-generated CA private key for use in future LittleProxy executions
+		// (see CustomCAPemFileExample.java for an example loading a previously-generated CA cert + key from a PEM file)
+		ecRootCertificateGenerator.savePrivateKeyAsPemFile(new File("/tmp/my-ec-private-key.pem"), "secretPassword");
 
-        // tell the MitmManager to use the root certificate we just generated, and to use EC keys when
-        // creating impersonated server certs
-        ImpersonatingMitmManager mitmManager = ImpersonatingMitmManager.builder()
-                .rootCertificateSource(ecRootCertificateGenerator)
-                .serverKeyGenerator(new ECKeyGenerator())
-                .build();
+		// tell the MitmManager to use the root certificate we just generated, and to use EC keys when
+		// creating impersonated server certs
+		ImpersonatingMitmManager mitmManager = ImpersonatingMitmManager.builder()
+				.rootCertificateSource(ecRootCertificateGenerator)
+				.serverKeyGenerator(new ECKeyGenerator())
+				.build();
 
-        // tell the HttpProxyServerBootstrap to use the new MitmManager
-        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
-                .withManInTheMiddle(mitmManager)
-                .start();
+		// tell the HttpProxyServerBootstrap to use the new MitmManager
+		HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+				.withManInTheMiddle(mitmManager)
+				.start();
 
-        // make your requests to the proxy server
-        //...
+		// make your requests to the proxy server
+		//...
 
-        proxyServer.abort();
-    }
+		proxyServer.abort();
+	}
 }

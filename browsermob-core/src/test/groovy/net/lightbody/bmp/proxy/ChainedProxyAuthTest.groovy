@@ -57,8 +57,8 @@ class ChainedProxyAuthTest extends MockServerTest {
                 .withPath("/proxyauth"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.setChainedProxy(upstreamProxy.getListenAddress())
@@ -79,16 +79,16 @@ class ChainedProxyAuthTest extends MockServerTest {
 
         upstreamProxy = DefaultHttpProxyServer.bootstrap()
                 .withProxyAuthenticator(new ProxyAuthenticator() {
-            @Override
-            boolean authenticate(String user, String password) {
-                return proxyUser.equals(user) && proxyPassword.equals(password)
-            }
+                    @Override
+                    boolean authenticate(String user, String password) {
+                        return proxyUser.equals(user) && proxyPassword.equals(password)
+                    }
 
-            @Override
-            String getRealm() {
-                return "some-realm"
-            }
-        })
+                    @Override
+                    String getRealm() {
+                        return "some-realm"
+                    }
+                })
                 .withPort(0)
                 .start()
 
@@ -97,8 +97,8 @@ class ChainedProxyAuthTest extends MockServerTest {
                 .withPath("/proxyauth"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(500)
-                .withBody("shouldn't happen"))
+                        .withStatusCode(500)
+                        .withBody("shouldn't happen"))
 
         proxy = new BrowserMobProxyServer();
         proxy.setChainedProxy(upstreamProxy.getListenAddress())

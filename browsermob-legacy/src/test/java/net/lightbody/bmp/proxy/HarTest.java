@@ -41,23 +41,23 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class HarTest extends LocalServerTest {
-    @Test
-    public void testRequestAndResponseSizesAreSet() throws Exception {
+	@Test
+	public void testRequestAndResponseSizesAreSet() throws Exception {
 
-        // see https://github.com/lightbody/browsermob-proxy/pull/36 for history
+		// see https://github.com/lightbody/browsermob-proxy/pull/36 for history
 
-        proxy.setCaptureContent(true);
-        proxy.newHar("test");
+		proxy.setCaptureContent(true);
+		proxy.newHar("test");
 
-        HttpGet get = new HttpGet(getLocalServerHostnameAndPort() + "/a.txt");
-        client.execute(get);
+		HttpGet get = new HttpGet(getLocalServerHostnameAndPort() + "/a.txt");
+		client.execute(get);
 
-        // add a small delay to allow the HAR to populate
-        Thread.sleep(500);
-        Har har = proxy.getHar();
-        HarLog log = har.getLog();
-        List<HarEntry> entries = log.getEntries();
-        HarEntry entry = entries.get(0);
+		// add a small delay to allow the HAR to populate
+		Thread.sleep(500);
+		Har har = proxy.getHar();
+		HarLog log = har.getLog();
+		List<HarEntry> entries = log.getEntries();
+		HarEntry entry = entries.get(0);
 
         /*
         Request headers should be something like this:
@@ -65,8 +65,8 @@ public class HarTest extends LocalServerTest {
         Host: 127.0.0.1:8080
         User-Agent: bmp.lightbody.net/2.0-beta-10-SNAPSHOT
          */
-        assertThat("Minimum header size not seen", entry.getRequest().getHeadersSize(), greaterThan(70L));
-        assertEquals(0, entry.getRequest().getBodySize());
+		assertThat("Minimum header size not seen", entry.getRequest().getHeadersSize(), greaterThan(70L));
+		assertEquals(0, entry.getRequest().getBodySize());
 
         /*
         Response headers should be something like this:
@@ -76,9 +76,9 @@ public class HarTest extends LocalServerTest {
         Content-Length: 13
         Server: Jetty(7.6.16.v20140903)
          */
-        assertThat("Minimum header size not seen", entry.getResponse().getHeadersSize(), greaterThan(80L));
-        assertEquals(13, entry.getResponse().getBodySize());
-    }
+		assertThat("Minimum header size not seen", entry.getResponse().getHeadersSize(), greaterThan(80L));
+		assertEquals(13, entry.getResponse().getBodySize());
+	}
 
 	@Test
 	public void testThatProxyCanCaptureBodyInHar() throws IOException, InterruptedException {
@@ -89,7 +89,7 @@ public class HarTest extends LocalServerTest {
 
 		assertThat(body, containsString("this is a.txt"));
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -125,7 +125,7 @@ public class HarTest extends LocalServerTest {
 
 		assertThat(body, containsString("{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{}}"));
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -153,7 +153,7 @@ public class HarTest extends LocalServerTest {
 
 		IOUtils.toStringAndClose(client.execute(post).getEntity().getContent());
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -181,13 +181,13 @@ public class HarTest extends LocalServerTest {
 
 		InputStream is1 = client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/c.png")).getEntity().getContent();
 		ByteArrayOutputStream o1 = new ByteArrayOutputStream();
-        IOUtils.copyAndClose(is1, o1);
+		IOUtils.copyAndClose(is1, o1);
 		ByteArrayOutputStream o2 = new ByteArrayOutputStream();
-        IOUtils.copyAndClose(HarTest.class.getResourceAsStream("/local-server/c.png"), o2);
+		IOUtils.copyAndClose(HarTest.class.getResourceAsStream("/local-server/c.png"), o2);
 
 		assertTrue("Image does not match file system", Arrays.equals(o1.toByteArray(), o2.toByteArray()));
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -217,7 +217,7 @@ public class HarTest extends LocalServerTest {
 		HttpGet get = new HttpGet(getLocalServerHostnameAndPort() + "/a.txt?foo=bar&a=1%262");
 		client.execute(get);
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -262,7 +262,7 @@ public class HarTest extends LocalServerTest {
 
 		assertThat(body, containsString("this is a.txt"));
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -297,7 +297,7 @@ public class HarTest extends LocalServerTest {
 
 		proxy.endPage();
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -327,37 +327,37 @@ public class HarTest extends LocalServerTest {
 		assertNotEquals("har page onLoad timing should be greater than 0", 0L, timings2.getOnLoad().longValue());
 	}
 
-    @Test
-    public void testHarPageTitlePopulated() throws Exception {
-        proxy.newHar("testpage1", "Test Page 1");
+	@Test
+	public void testHarPageTitlePopulated() throws Exception {
+		proxy.newHar("testpage1", "Test Page 1");
 
-        HttpGet get = new HttpGet(getLocalServerHostnameAndPort() + "/a.txt");
-        IOUtils.toStringAndClose(client.execute(get).getEntity().getContent());
+		HttpGet get = new HttpGet(getLocalServerHostnameAndPort() + "/a.txt");
+		IOUtils.toStringAndClose(client.execute(get).getEntity().getContent());
 
-        proxy.endPage();
+		proxy.endPage();
 
-        proxy.newPage("testpage2", "Test Page 2");
+		proxy.newPage("testpage2", "Test Page 2");
 
-        IOUtils.toStringAndClose(client.execute(get).getEntity().getContent());
-        IOUtils.toStringAndClose(client.execute(get).getEntity().getContent());
+		IOUtils.toStringAndClose(client.execute(get).getEntity().getContent());
+		IOUtils.toStringAndClose(client.execute(get).getEntity().getContent());
 
-        proxy.endPage();
+		proxy.endPage();
 
-        Thread.sleep(500);
-        Har har = proxy.getHar();
-        assertNotNull("Har is null", har);
-        HarLog log = har.getLog();
-        assertNotNull("Log is null", log);
+		Thread.sleep(500);
+		Har har = proxy.getHar();
+		assertNotNull("Har is null", har);
+		HarLog log = har.getLog();
+		assertNotNull("Log is null", log);
 
-        assertNotNull("har pages are null", log.getPages());
-        assertEquals("expected 2 har pages", 2, log.getPages().size());
+		assertNotNull("har pages are null", log.getPages());
+		assertEquals("expected 2 har pages", 2, log.getPages().size());
 
-        HarPage page1 = log.getPages().get(0);
-        assertEquals("incorrect har page title", "Test Page 1", page1.getTitle());
+		HarPage page1 = log.getPages().get(0);
+		assertEquals("incorrect har page title", "Test Page 1", page1.getTitle());
 
-        HarPage page2 = log.getPages().get(1);
-        assertEquals("incorrect har page title", "Test Page 2", page2.getTitle());
-    }
+		HarPage page2 = log.getPages().get(1);
+		assertEquals("incorrect har page title", "Test Page 2", page2.getTitle());
+	}
 
 	@Test
 	public void testIpAddressPopulatedForLocalhost() throws IOException, InterruptedException {
@@ -368,7 +368,7 @@ public class HarTest extends LocalServerTest {
 
 		proxy.endPage();
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -381,21 +381,21 @@ public class HarTest extends LocalServerTest {
 		HarEntry entry = log.getEntries().get(0);
 		assertNotNull("entry startedDateTime is null", entry.getStartedDateTime());
 
-            assertEquals("entry pageref is incorrect", "testIpAddressPopulated", entry.getPageref());
+		assertEquals("entry pageref is incorrect", "testIpAddressPopulated", entry.getPageref());
 
 		assertEquals("entry ip address is not correct", "127.0.0.1", entry.getServerIPAddress());
-    }
+	}
 
 	@Test
 	public void testIpAddressPopulatedForIpAddressUrl() throws IOException, InterruptedException {
 		proxy.newHar("testIpAddressPopulatedForIpAddressUrl");
 
-        HttpGet get = new HttpGet(getLocalServerHostnameAndPort() + "/a.txt");
+		HttpGet get = new HttpGet(getLocalServerHostnameAndPort() + "/a.txt");
 		IOUtils.toStringAndClose(client.execute(get).getEntity().getContent());
 
 		proxy.endPage();
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		assertNotNull("Har is null", har);
 		HarLog log = har.getLog();
@@ -403,7 +403,7 @@ public class HarTest extends LocalServerTest {
 
 		List<HarEntry> entries = log.getEntries();
 		assertNotNull("Entries are null", entries);
-        assertThat("Entries are empty", entries,  not(empty()));
+		assertThat("Entries are empty", entries, not(empty()));
 
 		HarEntry entry = log.getEntries().get(0);
 		assertNotNull("entry startedDateTime is null", entry.getStartedDateTime());
@@ -427,7 +427,7 @@ public class HarTest extends LocalServerTest {
 
 		String body = IOUtils.toStringAndClose(client.execute(post).getEntity().getContent());
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		HarLog log = har.getLog();
 		List<HarEntry> entries = log.getEntries();
@@ -457,7 +457,7 @@ public class HarTest extends LocalServerTest {
 
 		String body = IOUtils.toStringAndClose(client.execute(post).getEntity().getContent());
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 		Har har = proxy.getHar();
 		HarLog log = har.getLog();
 		List<HarEntry> entries = log.getEntries();
@@ -470,7 +470,7 @@ public class HarTest extends LocalServerTest {
 		Random random = new Random();
 		StringBuilder lengthyPost = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
-			lengthyPost.append((char)(random.nextInt(94) + 32));
+			lengthyPost.append((char) (random.nextInt(94) + 32));
 		}
 
 		return lengthyPost.toString();

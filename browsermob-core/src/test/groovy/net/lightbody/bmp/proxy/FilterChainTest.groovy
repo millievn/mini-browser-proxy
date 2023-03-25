@@ -19,9 +19,7 @@ import org.mockserver.matchers.Times
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.response
 
@@ -47,8 +45,8 @@ class FilterChainTest extends MockServerTest {
                 .withPath("/testfilterexceptionpreservesrequest"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withBody("success"));
 
         proxy = new BrowserMobProxyServer();
 
@@ -81,8 +79,8 @@ class FilterChainTest extends MockServerTest {
                 .withPath("/testfilterexceptionpreserveschain"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withBody("success"));
 
         proxy = new BrowserMobProxyServer();
 
@@ -149,8 +147,8 @@ class FilterChainTest extends MockServerTest {
                 .withPath("/testrequestresponsefilterpreservesrequest"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withBody("success"));
 
         proxy = new BrowserMobProxyServer();
 
@@ -183,8 +181,8 @@ class FilterChainTest extends MockServerTest {
                 .withPath("/testrequestresponsefilterpreserveschain"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withBody("success"));
 
         proxy = new BrowserMobProxyServer();
 

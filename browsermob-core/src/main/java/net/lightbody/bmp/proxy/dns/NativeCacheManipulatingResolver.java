@@ -20,69 +20,69 @@ import java.util.concurrent.TimeUnit;
  * the same as {@link net.lightbody.bmp.proxy.dns.NativeResolver} on that platform.
  */
 public class NativeCacheManipulatingResolver extends NativeResolver {
-    private static final Logger log = LoggerFactory.getLogger(NativeCacheManipulatingResolver.class);
+	private static final Logger log = LoggerFactory.getLogger(NativeCacheManipulatingResolver.class);
 
-    @Override
-    public void clearDNSCache() {
-        // clear the DNS cache but replacing the LinkedHashMaps that contain the positive and negative caches on the
-        // private static InetAddress.Cache inner class with new, empty maps
-        try {
-            Field positiveCacheField = InetAddress.class.getDeclaredField("addressCache");
-            positiveCacheField.setAccessible(true);
-            Object positiveCacheInstance = positiveCacheField.get(null);
+	@Override
+	public void clearDNSCache() {
+		// clear the DNS cache but replacing the LinkedHashMaps that contain the positive and negative caches on the
+		// private static InetAddress.Cache inner class with new, empty maps
+		try {
+			Field positiveCacheField = InetAddress.class.getDeclaredField("addressCache");
+			positiveCacheField.setAccessible(true);
+			Object positiveCacheInstance = positiveCacheField.get(null);
 
-            Field negativeCacheField = InetAddress.class.getDeclaredField("negativeCache");
-            negativeCacheField.setAccessible(true);
-            Object negativeCacheInstance = positiveCacheField.get(null);
+			Field negativeCacheField = InetAddress.class.getDeclaredField("negativeCache");
+			negativeCacheField.setAccessible(true);
+			Object negativeCacheInstance = positiveCacheField.get(null);
 
-            Class<?> cacheClass = Class.forName("java.net.InetAddress$Cache");
-            Field cacheField = cacheClass.getDeclaredField("cache");
-            cacheField.setAccessible(true);
+			Class<?> cacheClass = Class.forName("java.net.InetAddress$Cache");
+			Field cacheField = cacheClass.getDeclaredField("cache");
+			cacheField.setAccessible(true);
 
-            cacheField.set(positiveCacheInstance, new LinkedHashMap());
-            cacheField.set(negativeCacheInstance, new LinkedHashMap());
-        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
-            log.warn("Unable to clear native JVM DNS cache", e);
-        }
-    }
+			cacheField.set(positiveCacheInstance, new LinkedHashMap());
+			cacheField.set(negativeCacheInstance, new LinkedHashMap());
+		} catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+			log.warn("Unable to clear native JVM DNS cache", e);
+		}
+	}
 
-    @Override
-    public void setPositiveDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
-        try {
-            Class<?> inetAddressCachePolicyClass = Class.forName("sun.net.InetAddressCachePolicy");
+	@Override
+	public void setPositiveDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
+		try {
+			Class<?> inetAddressCachePolicyClass = Class.forName("sun.net.InetAddressCachePolicy");
 
-            Field positiveCacheTimeoutSeconds = inetAddressCachePolicyClass.getDeclaredField("cachePolicy");
-            positiveCacheTimeoutSeconds.setAccessible(true);
+			Field positiveCacheTimeoutSeconds = inetAddressCachePolicyClass.getDeclaredField("cachePolicy");
+			positiveCacheTimeoutSeconds.setAccessible(true);
 
-            if (timeout < 0) {
-                positiveCacheTimeoutSeconds.setInt(null, -1);
-                java.security.Security.setProperty("networkaddress.cache.ttl", "-1");
-            } else {
-                positiveCacheTimeoutSeconds.setInt(null, (int) TimeUnit.SECONDS.convert(timeout, timeUnit));
-                java.security.Security.setProperty("networkaddress.cache.ttl", Long.toString(TimeUnit.SECONDS.convert(timeout, timeUnit)));
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-            log.warn("Unable to modify native JVM DNS cache timeouts", e);
-        }
-    }
+			if (timeout < 0) {
+				positiveCacheTimeoutSeconds.setInt(null, -1);
+				java.security.Security.setProperty("networkaddress.cache.ttl", "-1");
+			} else {
+				positiveCacheTimeoutSeconds.setInt(null, (int) TimeUnit.SECONDS.convert(timeout, timeUnit));
+				java.security.Security.setProperty("networkaddress.cache.ttl", Long.toString(TimeUnit.SECONDS.convert(timeout, timeUnit)));
+			}
+		} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+			log.warn("Unable to modify native JVM DNS cache timeouts", e);
+		}
+	}
 
-    @Override
-    public void setNegativeDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
-        try {
-            Class<?> inetAddressCachePolicyClass = Class.forName("sun.net.InetAddressCachePolicy");
+	@Override
+	public void setNegativeDNSCacheTimeout(int timeout, TimeUnit timeUnit) {
+		try {
+			Class<?> inetAddressCachePolicyClass = Class.forName("sun.net.InetAddressCachePolicy");
 
-            Field negativeCacheTimeoutSeconds = inetAddressCachePolicyClass.getDeclaredField("negativeCachePolicy");
-            negativeCacheTimeoutSeconds.setAccessible(true);
+			Field negativeCacheTimeoutSeconds = inetAddressCachePolicyClass.getDeclaredField("negativeCachePolicy");
+			negativeCacheTimeoutSeconds.setAccessible(true);
 
-            if (timeout < 0) {
-                negativeCacheTimeoutSeconds.setInt(null, -1);
-                java.security.Security.setProperty("networkaddress.cache.negative.ttl", "-1");
-            } else {
-                negativeCacheTimeoutSeconds.setInt(null, (int) TimeUnit.SECONDS.convert(timeout, timeUnit));
-                java.security.Security.setProperty("networkaddress.cache.negative.ttl", Long.toString(TimeUnit.SECONDS.convert(timeout, timeUnit)));
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-            log.warn("Unable to modify native JVM DNS cache timeouts", e);
-        }
-    }
+			if (timeout < 0) {
+				negativeCacheTimeoutSeconds.setInt(null, -1);
+				java.security.Security.setProperty("networkaddress.cache.negative.ttl", "-1");
+			} else {
+				negativeCacheTimeoutSeconds.setInt(null, (int) TimeUnit.SECONDS.convert(timeout, timeUnit));
+				java.security.Security.setProperty("networkaddress.cache.negative.ttl", Long.toString(TimeUnit.SECONDS.convert(timeout, timeUnit)));
+			}
+		} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+			log.warn("Unable to modify native JVM DNS cache timeouts", e);
+		}
+	}
 }

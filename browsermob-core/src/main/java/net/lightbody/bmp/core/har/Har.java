@@ -9,34 +9,34 @@ import java.io.Writer;
 
 public class Har {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private volatile HarLog log;
+	private volatile HarLog log;
 
-    public Har() {
-    }
+	public Har() {
+	}
 
-    public Har(HarLog log) {
-        this.log = log;
-    }
+	public Har(HarLog log) {
+		this.log = log;
+	}
 
-    public HarLog getLog() {
-        return log;
-    }
+	public HarLog getLog() {
+		return log;
+	}
 
-    public void setLog(HarLog log) {
-        this.log = log;
-    }
+	public void setLog(HarLog log) {
+		this.log = log;
+	}
 
-    public void writeTo(Writer writer) throws IOException {
-        OBJECT_MAPPER.writeValue(writer, this);
-    }
+	public void writeTo(Writer writer) throws IOException {
+		OBJECT_MAPPER.writeValue(writer, this);
+	}
 
-    public void writeTo(OutputStream os) throws IOException {
-        OBJECT_MAPPER.writeValue(os, this);
-    }
+	public void writeTo(OutputStream os) throws IOException {
+		OBJECT_MAPPER.writeValue(os, this);
+	}
 
-    public void writeTo(File file) throws IOException {
-        OBJECT_MAPPER.writeValue(file, this);
-    }
+	public void writeTo(File file) throws IOException {
+		OBJECT_MAPPER.writeValue(file, this);
+	}
 }

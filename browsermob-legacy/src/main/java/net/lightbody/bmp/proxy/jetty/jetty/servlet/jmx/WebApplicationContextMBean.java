@@ -30,121 +30,114 @@ import java.util.Iterator;
 import java.util.Map;
 
 /* ------------------------------------------------------------ */
-/** Web Application MBean.
+
+/**
+ * Web Application MBean.
  * Note that while Web Applications are HttpContexts, the MBean is
  * not derived from HttpContextMBean as they are managed differently.
  *
- * @version $Revision: 1.11 $
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.11 $
  */
-public class WebApplicationContextMBean extends ServletHttpContextMBean
-{
-    private static final Log log = LogFactory.getLog(WebApplicationContextMBean.class);
-    private WebApplicationContext _webappContext;
-    private Map _configurations = new HashMap();
-    
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     */
-    public WebApplicationContextMBean()
-        throws MBeanException
-    {}
+public class WebApplicationContextMBean extends ServletHttpContextMBean {
+	private static final Log log = LogFactory.getLog(WebApplicationContextMBean.class);
+	private WebApplicationContext _webappContext;
+	private Map _configurations = new HashMap();
 
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
+	/* ------------------------------------------------------------ */
 
-        defineAttribute("displayName",false);
-        defineAttribute("defaultsDescriptor",true);
-        defineAttribute("WAR",true);
-        defineAttribute("extractWAR",true);
-        _webappContext=(WebApplicationContext)getManagedResource();
-        _webappContext.addEventListener(new LifeCycleListener()
-                {
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public WebApplicationContextMBean()
+			throws MBeanException {
+	}
 
-                    public void lifeCycleStarting (LifeCycleEvent event)
-                    {}
-                    
-                    public void lifeCycleStarted (LifeCycleEvent event)
-                    {
-                        getConfigurations();
-                    }
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
 
-                    public void lifeCycleFailure (LifeCycleEvent event)
-                    {}
+		defineAttribute("displayName", false);
+		defineAttribute("defaultsDescriptor", true);
+		defineAttribute("WAR", true);
+		defineAttribute("extractWAR", true);
+		_webappContext = (WebApplicationContext) getManagedResource();
+		_webappContext.addEventListener(new LifeCycleListener() {
 
-                    public void lifeCycleStopping (LifeCycleEvent event)
-                    {}
+			public void lifeCycleStarting(LifeCycleEvent event) {
+			}
 
-                    public void lifeCycleStopped (LifeCycleEvent event)
-                    {
-                        destroyConfigurations();
-                    }
-            
-                });
-    }
-    
-    
-    /** postRegister
-     * Register mbeans for all of the jsr77 servlet stats
-     * @see javax.management.MBeanRegistration#postRegister(java.lang.Boolean)
-     */
-    public void postRegister(Boolean ok)
-    {
-        super.postRegister(ok);
-        getConfigurations();
-    }
-    
-    
-   
-    
-    
-    /**postDeregister
-     * Unregister mbeans we created for the Configuration objects.
-     * @see javax.management.MBeanRegistration#postDeregister()
-     */
-    public void postDeregister ()
-    {
-        destroyConfigurations ();     
-        super.postDeregister();
-    }
-   
-    
-    /**getConfigurations
-     * Make mbeans for all of the Configurations applied to the
-     * WebApplicationContext
-     * @return
-     */
-    public ObjectName[] getConfigurations ()
-    { 
-        return getComponentMBeans(_webappContext.getConfigurations(),_configurations); 
-    }
-    
-    public void destroyConfigurations ()
-    {
-        MBeanServer mbeanServer = getMBeanServer();
-        Iterator itor = _configurations.values().iterator();
-        while (itor.hasNext())
-        {
-            try
-            {
-                ObjectName o = (ObjectName)itor.next();
-                log.debug("Unregistering: "+o);
-                
-                if (null!=mbeanServer)
-                    mbeanServer.unregisterMBean((ObjectName)o);
-            }
-            catch (Exception e)
-            {
-                log.warn(LogSupport.EXCEPTION, e);
-            }
-        }
-        _configurations.clear();
-    }
-    
-    
- 
-    
+			public void lifeCycleStarted(LifeCycleEvent event) {
+				getConfigurations();
+			}
+
+			public void lifeCycleFailure(LifeCycleEvent event) {
+			}
+
+			public void lifeCycleStopping(LifeCycleEvent event) {
+			}
+
+			public void lifeCycleStopped(LifeCycleEvent event) {
+				destroyConfigurations();
+			}
+
+		});
+	}
+
+
+	/**
+	 * postRegister
+	 * Register mbeans for all of the jsr77 servlet stats
+	 *
+	 * @see javax.management.MBeanRegistration#postRegister(java.lang.Boolean)
+	 */
+	public void postRegister(Boolean ok) {
+		super.postRegister(ok);
+		getConfigurations();
+	}
+
+
+	/**
+	 * postDeregister
+	 * Unregister mbeans we created for the Configuration objects.
+	 *
+	 * @see javax.management.MBeanRegistration#postDeregister()
+	 */
+	public void postDeregister() {
+		destroyConfigurations();
+		super.postDeregister();
+	}
+
+
+	/**
+	 * getConfigurations
+	 * Make mbeans for all of the Configurations applied to the
+	 * WebApplicationContext
+	 *
+	 * @return
+	 */
+	public ObjectName[] getConfigurations() {
+		return getComponentMBeans(_webappContext.getConfigurations(), _configurations);
+	}
+
+	public void destroyConfigurations() {
+		MBeanServer mbeanServer = getMBeanServer();
+		Iterator itor = _configurations.values().iterator();
+		while (itor.hasNext()) {
+			try {
+				ObjectName o = (ObjectName) itor.next();
+				log.debug("Unregistering: " + o);
+
+				if (null != mbeanServer)
+					mbeanServer.unregisterMBean((ObjectName) o);
+			} catch (Exception e) {
+				log.warn(LogSupport.EXCEPTION, e);
+			}
+		}
+		_configurations.clear();
+	}
+
+
 }

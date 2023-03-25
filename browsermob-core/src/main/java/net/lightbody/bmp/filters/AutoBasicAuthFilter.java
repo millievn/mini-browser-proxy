@@ -18,37 +18,37 @@ import java.util.Map;
  * The Basic authentication scheme is specified in RFC 2617, section 2: https://tools.ietf.org/html/rfc2617#section-2
  */
 public class AutoBasicAuthFilter extends HttpsAwareFiltersAdapter {
-    private final Map<String, String> credentialsByHostname;
+	private final Map<String, String> credentialsByHostname;
 
-    public AutoBasicAuthFilter(HttpRequest originalRequest, ChannelHandlerContext ctx, Map<String, String> credentialsByHostname) {
-        super(originalRequest, ctx);
+	public AutoBasicAuthFilter(HttpRequest originalRequest, ChannelHandlerContext ctx, Map<String, String> credentialsByHostname) {
+		super(originalRequest, ctx);
 
-        this.credentialsByHostname = credentialsByHostname;
-    }
+		this.credentialsByHostname = credentialsByHostname;
+	}
 
-    @Override
-    public HttpResponse clientToProxyRequest(HttpObject httpObject) {
-        if (credentialsByHostname.isEmpty()) {
-            return null;
-        }
+	@Override
+	public HttpResponse clientToProxyRequest(HttpObject httpObject) {
+		if (credentialsByHostname.isEmpty()) {
+			return null;
+		}
 
-        if (httpObject instanceof HttpRequest) {
-            HttpRequest httpRequest = (HttpRequest) httpObject;
+		if (httpObject instanceof HttpRequest) {
+			HttpRequest httpRequest = (HttpRequest) httpObject;
 
-            // providing authorization during a CONNECT is generally not useful
-            if (ProxyUtils.isCONNECT(httpRequest)) {
-                return null;
-            }
+			// providing authorization during a CONNECT is generally not useful
+			if (ProxyUtils.isCONNECT(httpRequest)) {
+				return null;
+			}
 
-            String hostname = getHost(httpRequest);
+			String hostname = getHost(httpRequest);
 
-            // if there is an entry in the credentials map matching this hostname, add the credentials to the request
-            String base64CredentialsForHostname = credentialsByHostname.get(hostname);
-            if (base64CredentialsForHostname != null) {
-                httpRequest.headers().add(HttpHeaders.Names.AUTHORIZATION, "Basic " + base64CredentialsForHostname);
-            }
-        }
+			// if there is an entry in the credentials map matching this hostname, add the credentials to the request
+			String base64CredentialsForHostname = credentialsByHostname.get(hostname);
+			if (base64CredentialsForHostname != null) {
+				httpRequest.headers().add(HttpHeaders.Names.AUTHORIZATION, "Basic " + base64CredentialsForHostname);
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

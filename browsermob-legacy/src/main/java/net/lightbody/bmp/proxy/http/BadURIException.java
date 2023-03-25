@@ -16,6 +16,6 @@ public class BadURIException extends RuntimeException {
 	}
 
 	public BadURIException(String message) {
-        super(message);
-    }
+		super(message);
+	}
 }

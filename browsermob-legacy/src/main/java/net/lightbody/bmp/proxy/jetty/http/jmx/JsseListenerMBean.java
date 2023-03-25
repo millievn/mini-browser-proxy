@@ -19,27 +19,27 @@ import javax.management.MBeanException;
 
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.3 $
- * @author Greg Wilkins (gregw)
- */
-public class JsseListenerMBean extends SocketListenerMBean
-{
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     */
-    public JsseListenerMBean()
-        throws MBeanException
-    {
-        super();
-    }
 
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("needClientAuth");
-    }
+/**
+ * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.3 $
+ */
+public class JsseListenerMBean extends SocketListenerMBean {
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public JsseListenerMBean()
+			throws MBeanException {
+		super();
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("needClientAuth");
+	}
 }

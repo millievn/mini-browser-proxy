@@ -1,17 +1,13 @@
 package net.lightbody.bmp.mitm
 
-import net.lightbody.bmp.mitm.test.util.CertificateTestUtil
 import net.lightbody.bmp.mitm.keys.RSAKeyGenerator
+import net.lightbody.bmp.mitm.test.util.CertificateTestUtil
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static org.hamcrest.Matchers.greaterThan
-import static org.hamcrest.Matchers.isEmptyOrNullString
-import static org.hamcrest.Matchers.not
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertThat
+import static org.hamcrest.Matchers.*
+import static org.junit.Assert.*
 
 class RootCertificateGeneratorTest {
     @Rule
@@ -82,7 +78,7 @@ class RootCertificateGeneratorTest {
         assertThat("Expected string containing PEM-encoded private key to contain characters", pemEncodedPrivateKey, not(isEmptyOrNullString()))
 
         String pemEncodedCertificate = generator.encodeRootCertificateAsPem()
-        assertThat("Expected string containing PEM-encoded certificate to contain characters", pemEncodedCertificate , not(isEmptyOrNullString()))
+        assertThat("Expected string containing PEM-encoded certificate to contain characters", pemEncodedCertificate, not(isEmptyOrNullString()))
     }
 
 }

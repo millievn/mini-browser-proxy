@@ -25,150 +25,220 @@ import java.io.*;
 
 
 /* ------------------------------------------------------------ */
-/** Servlet PrintWriter.
+
+/**
+ * Servlet PrintWriter.
  * This writer can be disabled.
  * It is crying out for optimization.
  *
- * @version $Revision: 1.16 $
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.16 $
  */
-class ServletWriter extends PrintWriter
-{
+class ServletWriter extends PrintWriter {
 	private static Log log = LogFactory.getLog(ServletWriter.class);
 
-    String encoding=null;
-    OutputStream os=null;
-    boolean written=false;
-    
-    /* ------------------------------------------------------------ */
-    ServletWriter(OutputStream os)
-        throws IOException
-    {
-        super((os instanceof HttpOutputStream) 
-              ?((HttpOutputStream)os).getWriter(null)
-              :new OutputStreamWriter(os));
-        this.os=os;
-    }
-    
-    /* ------------------------------------------------------------ */
-    ServletWriter(OutputStream os, String encoding)
-        throws IOException
-    {
-        super((os instanceof HttpOutputStream)
-              ?((HttpOutputStream)os).getWriter(encoding)
-              :new OutputStreamWriter(os,encoding));
-        this.os=os;
-        this.encoding=encoding;
-    }
+	String encoding = null;
+	OutputStream os = null;
+	boolean written = false;
 
-    /* ------------------------------------------------------------ */
-    public void disable()
-    {
-        out=IO.getNullWriter();
-    }
-    
-    /* ------------------------------------------------------------ */
-    public void reset()
-    {
-        try{
-            out=IO.getNullWriter();
-            super.flush();
-            out=new OutputStreamWriter(os,encoding);
-            written=false;
-        }
-        catch(UnsupportedEncodingException e)
-        {
-            log.fatal(e); System.exit(1);
-        }
-    }
-    
+	/* ------------------------------------------------------------ */
+	ServletWriter(OutputStream os)
+			throws IOException {
+		super((os instanceof HttpOutputStream)
+				? ((HttpOutputStream) os).getWriter(null)
+				: new OutputStreamWriter(os));
+		this.os = os;
+	}
 
-    /* ------------------------------------------------------------ */
-    public boolean isWritten()
-    {
-        return written;
-    }
+	/* ------------------------------------------------------------ */
+	ServletWriter(OutputStream os, String encoding)
+			throws IOException {
+		super((os instanceof HttpOutputStream)
+				? ((HttpOutputStream) os).getWriter(encoding)
+				: new OutputStreamWriter(os, encoding));
+		this.os = os;
+		this.encoding = encoding;
+	}
 
-    
-    /* ------------------------------------------------------------ */
-    public void print(boolean p)  {written=true;super.print(p);}
-    public void print(char p)     {written=true;super.print(p);}
-    public void print(char[] p)   {written=true;super.print(p);}
-    public void print(double p)   {written=true;super.print(p);}
-    public void print(float p)    {written=true;super.print(p);}
-    public void print(int p)      {written=true;super.print(p);}
-    public void print(long p)     {written=true;super.print(p);}
-    public void print(Object p)   {written=true;super.print(p);}
-    public void print(String p)   {written=true;super.print(p);}
-    public void println()         {written=true;super.println();}
-    public void println(boolean p){written=true;super.println(p);}
-    public void println(char p)   {written=true;super.println(p);}
-    public void println(char[] p) {written=true;super.println(p);}
-    public void println(double p) {written=true;super.println(p);}
-    public void println(float p)  {written=true;super.println(p);}
-    public void println(int p)    {written=true;super.println(p);}
-    public void println(long p)   {written=true;super.println(p);}
-    public void println(Object p) {written=true;super.println(p);}
-    public void println(String p) {written=true;super.println(p);}
+	/* ------------------------------------------------------------ */
+	public void disable() {
+		out = IO.getNullWriter();
+	}
 
-    
-    public void write(int c)
-    {
-        try
-        {
-            if (out==null)
-                throw new IOException("closed");
-            written=true;
-            out.write(c);
-        }
-        catch (IOException e){LogSupport.ignore(log,e);setError();}
-    }
-    
-    public void write(char[] cbuf, int off, int len)
-    {
-        try
-        {
-            if (out==null)
-                throw new IOException("closed");
-            written=true;
-            out.write(cbuf,off,len);
-        }
-        catch (IOException e){LogSupport.ignore(log,e);setError();}
-    }
-    
-    public void write(char[] cbuf)
-    {
-        try
-        {
-            if (out==null)
-                throw new IOException("closed");
-            written=true;
-            out.write(cbuf,0,cbuf.length);
-        }
-        catch (IOException e){LogSupport.ignore(log,e);setError();}
-    }
+	/* ------------------------------------------------------------ */
+	public void reset() {
+		try {
+			out = IO.getNullWriter();
+			super.flush();
+			out = new OutputStreamWriter(os, encoding);
+			written = false;
+		} catch (UnsupportedEncodingException e) {
+			log.fatal(e);
+			System.exit(1);
+		}
+	}
 
-    public void write(String s, int off, int len)
-    {
-        try
-        {
-            if (out==null)
-                throw new IOException("closed");
-            written=true;
-            out.write(s,off,len);
-        }
-        catch (IOException e){LogSupport.ignore(log,e);setError();}
-    }
 
-    public void write(String s)
-    {
-        try
-        {
-            if (out==null)
-                throw new IOException("closed");
-            written=true;
-            out.write(s,0,s.length());
-        }
-        catch (IOException e){LogSupport.ignore(log,e);setError();}
-    }
+	/* ------------------------------------------------------------ */
+	public boolean isWritten() {
+		return written;
+	}
+
+
+	/* ------------------------------------------------------------ */
+	public void print(boolean p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(char p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(char[] p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(double p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(float p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(int p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(long p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(Object p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void print(String p) {
+		written = true;
+		super.print(p);
+	}
+
+	public void println() {
+		written = true;
+		super.println();
+	}
+
+	public void println(boolean p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(char p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(char[] p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(double p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(float p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(int p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(long p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(Object p) {
+		written = true;
+		super.println(p);
+	}
+
+	public void println(String p) {
+		written = true;
+		super.println(p);
+	}
+
+
+	public void write(int c) {
+		try {
+			if (out == null)
+				throw new IOException("closed");
+			written = true;
+			out.write(c);
+		} catch (IOException e) {
+			LogSupport.ignore(log, e);
+			setError();
+		}
+	}
+
+	public void write(char[] cbuf, int off, int len) {
+		try {
+			if (out == null)
+				throw new IOException("closed");
+			written = true;
+			out.write(cbuf, off, len);
+		} catch (IOException e) {
+			LogSupport.ignore(log, e);
+			setError();
+		}
+	}
+
+	public void write(char[] cbuf) {
+		try {
+			if (out == null)
+				throw new IOException("closed");
+			written = true;
+			out.write(cbuf, 0, cbuf.length);
+		} catch (IOException e) {
+			LogSupport.ignore(log, e);
+			setError();
+		}
+	}
+
+	public void write(String s, int off, int len) {
+		try {
+			if (out == null)
+				throw new IOException("closed");
+			written = true;
+			out.write(s, off, len);
+		} catch (IOException e) {
+			LogSupport.ignore(log, e);
+			setError();
+		}
+	}
+
+	public void write(String s) {
+		try {
+			if (out == null)
+				throw new IOException("closed");
+			written = true;
+			out.write(s, 0, s.length());
+		} catch (IOException e) {
+			LogSupport.ignore(log, e);
+			setError();
+		}
+	}
 }

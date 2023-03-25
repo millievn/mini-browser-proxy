@@ -24,18 +24,19 @@ import java.io.IOException;
 
 
 /* ------------------------------------------------------------ */
-/** Abstract HTTP Handler.
- * @version $Id: NullHandler.java,v 1.17 2004/05/09 20:32:06 gregwilkins Exp $
+
+/**
+ * Abstract HTTP Handler.
+ *
  * @author Greg Wilkins (gregw)
+ * @version $Id: NullHandler.java,v 1.17 2004/05/09 20:32:06 gregwilkins Exp $
  */
-public class NullHandler extends AbstractHttpHandler
-{
-    /* 
-     * @see HttpHandler#handle(java.lang.String, java.lang.String, HttpRequest, HttpResponse)
-     */
-    public void handle(String pathInContext, String pathParams, HttpRequest request, HttpResponse response) throws HttpException, IOException
-    {
-    }
+public class NullHandler extends AbstractHttpHandler {
+	/*
+	 * @see HttpHandler#handle(java.lang.String, java.lang.String, HttpRequest, HttpResponse)
+	 */
+	public void handle(String pathInContext, String pathParams, HttpRequest request, HttpResponse response) throws HttpException, IOException {
+	}
 }
 
 

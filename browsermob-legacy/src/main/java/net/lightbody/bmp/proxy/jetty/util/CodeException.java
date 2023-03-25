@@ -16,26 +16,28 @@
 package net.lightbody.bmp.proxy.jetty.util;
 
 /* ------------------------------------------------------------ */
-/** Code Exception.
- * 
- * Thrown by Code.assert or Code.fail
- * @see Code
- * @version  $Id: CodeException.java,v 1.2 2004/05/09 20:32:49 gregwilkins Exp $
- * @author Greg Wilkins
- */
-public class CodeException extends RuntimeException
-{
-    /* ------------------------------------------------------------ */
-    /** Default constructor. 
-     */
-    public CodeException()
-    {
-        super();
-    }
 
-    public CodeException(String msg)
-    {
-        super(msg);
-    }    
+/**
+ * Code Exception.
+ * <p>
+ * Thrown by Code.assert or Code.fail
+ *
+ * @author Greg Wilkins
+ * @version $Id: CodeException.java,v 1.2 2004/05/09 20:32:49 gregwilkins Exp $
+ * @see Code
+ */
+public class CodeException extends RuntimeException {
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Default constructor.
+	 */
+	public CodeException() {
+		super();
+	}
+
+	public CodeException(String msg) {
+		super(msg);
+	}
 }
 

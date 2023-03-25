@@ -20,51 +20,51 @@ import static org.junit.Assume.assumeFalse;
 
 public class RepeatableInputStreamTest extends LocalServerTest {
 
-    @Test
-    public void test()
-            throws UnsupportedEncodingException {
-        assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
+	@Test
+	public void test()
+			throws UnsupportedEncodingException {
+		assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
 
-        TestRequestInterceptor testRequestInterceptor = new TestRequestInterceptor();
+		TestRequestInterceptor testRequestInterceptor = new TestRequestInterceptor();
 
-        proxy.addRequestInterceptor(testRequestInterceptor);
+		proxy.addRequestInterceptor(testRequestInterceptor);
 
-        HttpPost post = new HttpPost(getLocalServerHostnameAndPort() + "/jsonrpc");
-        HttpEntity entity = new StringEntity("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"test\",\"params\":{}}");
-        post.setEntity(entity);
-        post.addHeader("Accept", "application/json-rpc");
-        post.addHeader("Content-Type", "application/json; charset=UTF-8");
+		HttpPost post = new HttpPost(getLocalServerHostnameAndPort() + "/jsonrpc");
+		HttpEntity entity = new StringEntity("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"test\",\"params\":{}}");
+		post.setEntity(entity);
+		post.addHeader("Accept", "application/json-rpc");
+		post.addHeader("Content-Type", "application/json; charset=UTF-8");
 
-        HttpResponse response = null;
-        try {
-            response = client.execute(post);
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        } finally {
+		HttpResponse response = null;
+		try {
+			response = client.execute(post);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		} finally {
 
-            EntityUtils.consumeQuietly(response.getEntity());
-        }
+			EntityUtils.consumeQuietly(response.getEntity());
+		}
 
-        Assert.assertTrue(response.getStatusLine().getStatusCode() == 200);
-        Assert.assertNotNull(testRequestInterceptor.getBrowserMobHttpRequest());
-        Assert.assertNotNull(testRequestInterceptor.getBrowserMobHttpRequest().getInputStreamEntity());
-        Assert.assertTrue(testRequestInterceptor.getBrowserMobHttpRequest().getInputStreamEntity().isRepeatable());
-    }
+		Assert.assertTrue(response.getStatusLine().getStatusCode() == 200);
+		Assert.assertNotNull(testRequestInterceptor.getBrowserMobHttpRequest());
+		Assert.assertNotNull(testRequestInterceptor.getBrowserMobHttpRequest().getInputStreamEntity());
+		Assert.assertTrue(testRequestInterceptor.getBrowserMobHttpRequest().getInputStreamEntity().isRepeatable());
+	}
 
-    class TestRequestInterceptor implements RequestInterceptor{
-        BrowserMobHttpRequest _browserMobHttpRequest;
+	class TestRequestInterceptor implements RequestInterceptor {
+		BrowserMobHttpRequest _browserMobHttpRequest;
 
-        public BrowserMobHttpRequest getBrowserMobHttpRequest(){
-            return _browserMobHttpRequest;
-        }
+		public BrowserMobHttpRequest getBrowserMobHttpRequest() {
+			return _browserMobHttpRequest;
+		}
 
-        @Override
-        public void process(BrowserMobHttpRequest request, Har har) {
-            _browserMobHttpRequest = request;
-        }
-    }
+		@Override
+		public void process(BrowserMobHttpRequest request, Har har) {
+			_browserMobHttpRequest = request;
+		}
+	}
 }

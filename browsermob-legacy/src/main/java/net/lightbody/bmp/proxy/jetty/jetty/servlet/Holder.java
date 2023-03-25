@@ -26,192 +26,182 @@ import java.util.*;
 
 
 /* --------------------------------------------------------------------- */
-/** 
- * @version $Id: Holder.java,v 1.18 2005/08/13 00:01:27 gregwilkins Exp $
+
+/**
  * @author Greg Wilkins
+ * @version $Id: Holder.java,v 1.18 2005/08/13 00:01:27 gregwilkins Exp $
  */
 public class Holder
-    extends AbstractMap
-    implements LifeCycle,
-               Serializable
-{
-    private static Log log = LogFactory.getLog(Holder.class);
+		extends AbstractMap
+		implements LifeCycle,
+		Serializable {
+	private static Log log = LogFactory.getLog(Holder.class);
 
-    /* ---------------------------------------------------------------- */
-    protected HttpHandler _httpHandler;
-    protected String _name;
-    protected String _displayName;
-    protected String _className;
-    protected Map _initParams;
-    
-    protected transient Class _class;
+	/* ---------------------------------------------------------------- */
+	protected HttpHandler _httpHandler;
+	protected String _name;
+	protected String _displayName;
+	protected String _className;
+	protected Map _initParams;
 
-    /* ---------------------------------------------------------------- */
-    /** Constructor for Serialization.
-     */
-    protected Holder()
-    {}
-    
-    /* ---------------------------------------------------------------- */
-    protected Holder(HttpHandler httpHandler,
-                     String name,
-                     String className)
-    {
-        if (name==null || name.length()==0)
-            throw new IllegalArgumentException("No name for "+className);
-        
-        if (className==null || className.length()==0)
-            throw new IllegalArgumentException("No classname");
-        
-        _httpHandler=httpHandler;
-        _className=className;
-        _name=name;
-        _displayName=name;
-    }
+	protected transient Class _class;
 
-    
-    /* ------------------------------------------------------------ */
-    public String getName()
-    {
-        return _name;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public void setDisplayName(String name)
-    {
-        _name=name;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public String getDisplayName()
-    {
-        return _name;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public String getClassName()
-    {
-        return _className;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public HttpHandler getHttpHandler()
-    {
-        return _httpHandler;
-    }
+	/* ---------------------------------------------------------------- */
 
-    /* ------------------------------------------------------------ */
-    public HttpContext getHttpContext()
-    {
-        if (_httpHandler!=null)
-            return _httpHandler.getHttpContext();
-        return null;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public void setInitParameter(String param,String value)
-    {
-        put(param,value);
-    }
+	/**
+	 * Constructor for Serialization.
+	 */
+	protected Holder() {
+	}
 
-    /* ---------------------------------------------------------------- */
-    public String getInitParameter(String param)
-    {
-        if (_initParams==null)
-            return null;
-        return (String)_initParams.get(param);
-    }
+	/* ---------------------------------------------------------------- */
+	protected Holder(HttpHandler httpHandler,
+									 String name,
+									 String className) {
+		if (name == null || name.length() == 0)
+			throw new IllegalArgumentException("No name for " + className);
 
-    /* ---------------------------------------------------------------- */
-    public Map getInitParameters()
-    {
-        return _initParams;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public Enumeration getInitParameterNames()
-    {
-        if (_initParams==null)
-            return Collections.enumeration(Collections.EMPTY_LIST);
-        return Collections.enumeration(_initParams.keySet());
-    }
+		if (className == null || className.length() == 0)
+			throw new IllegalArgumentException("No classname");
 
-    /* ------------------------------------------------------------ */
-    /** Map entrySet method.
-     * FilterHolder implements the Map interface as a
-     * configuration conveniance. The methods are mapped to the
-     * filter properties.
-     * @return The entrySet of the initParameter map
-     */
-    public synchronized Set entrySet()
-    {
-        if (_initParams==null)
-            _initParams=new HashMap(3);
-        return _initParams.entrySet();
-    }
+		_httpHandler = httpHandler;
+		_className = className;
+		_name = name;
+		_displayName = name;
+	}
 
-    /* ------------------------------------------------------------ */
-    /** Map put method.
-     * FilterHolder implements the Map interface as a
-     * configuration conveniance. The methods are mapped to the
-     * filter properties.
-     */
-    public synchronized Object put(Object name,Object value)
-    {
-        if (_initParams==null)
-            _initParams=new HashMap(3);
-        return _initParams.put(name,value);
-    }
 
-    /* ------------------------------------------------------------ */
-    /** Map get method.
-     * FilterHolder implements the Map interface as a
-     * configuration conveniance. The methods are mapped to the
-     * filter properties.
-     */
-    public synchronized Object get(Object name)
-    {
-        if (_initParams==null)
-            return null;
-        return _initParams.get(name);
-    }
+	/* ------------------------------------------------------------ */
+	public String getName() {
+		return _name;
+	}
 
-    /* ------------------------------------------------------------ */
-    public void start()
-        throws Exception
-    {
-        _class=_httpHandler.getHttpContext().loadClass(_className);
-        if(log.isDebugEnabled())log.debug("Started holder of "+_class);
-    }
-    
-    /* ------------------------------------------------------------ */
-    public synchronized Object newInstance()
-        throws InstantiationException,
-               IllegalAccessException
-    {
-        if (_class==null)
-            throw new InstantiationException("No class for "+this);
-        return _class.newInstance();
-    }
+	/* ------------------------------------------------------------ */
+	public void setDisplayName(String name) {
+		_name = name;
+	}
 
-    /* ------------------------------------------------------------ */
-    public boolean isStarted()
-    {
-        return _class!=null;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public void stop()
-    {
-        _class=null;
-    }
-    
-    /* ------------------------------------------------------------ */
-    public String toString()
-    {
-        return _name;
-    }
-    
+	/* ------------------------------------------------------------ */
+	public String getDisplayName() {
+		return _name;
+	}
+
+	/* ------------------------------------------------------------ */
+	public String getClassName() {
+		return _className;
+	}
+
+	/* ------------------------------------------------------------ */
+	public HttpHandler getHttpHandler() {
+		return _httpHandler;
+	}
+
+	/* ------------------------------------------------------------ */
+	public HttpContext getHttpContext() {
+		if (_httpHandler != null)
+			return _httpHandler.getHttpContext();
+		return null;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void setInitParameter(String param, String value) {
+		put(param, value);
+	}
+
+	/* ---------------------------------------------------------------- */
+	public String getInitParameter(String param) {
+		if (_initParams == null)
+			return null;
+		return (String) _initParams.get(param);
+	}
+
+	/* ---------------------------------------------------------------- */
+	public Map getInitParameters() {
+		return _initParams;
+	}
+
+	/* ------------------------------------------------------------ */
+	public Enumeration getInitParameterNames() {
+		if (_initParams == null)
+			return Collections.enumeration(Collections.EMPTY_LIST);
+		return Collections.enumeration(_initParams.keySet());
+	}
+
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Map entrySet method.
+	 * FilterHolder implements the Map interface as a
+	 * configuration conveniance. The methods are mapped to the
+	 * filter properties.
+	 *
+	 * @return The entrySet of the initParameter map
+	 */
+	public synchronized Set entrySet() {
+		if (_initParams == null)
+			_initParams = new HashMap(3);
+		return _initParams.entrySet();
+	}
+
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Map put method.
+	 * FilterHolder implements the Map interface as a
+	 * configuration conveniance. The methods are mapped to the
+	 * filter properties.
+	 */
+	public synchronized Object put(Object name, Object value) {
+		if (_initParams == null)
+			_initParams = new HashMap(3);
+		return _initParams.put(name, value);
+	}
+
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Map get method.
+	 * FilterHolder implements the Map interface as a
+	 * configuration conveniance. The methods are mapped to the
+	 * filter properties.
+	 */
+	public synchronized Object get(Object name) {
+		if (_initParams == null)
+			return null;
+		return _initParams.get(name);
+	}
+
+	/* ------------------------------------------------------------ */
+	public void start()
+			throws Exception {
+		_class = _httpHandler.getHttpContext().loadClass(_className);
+		if (log.isDebugEnabled()) log.debug("Started holder of " + _class);
+	}
+
+	/* ------------------------------------------------------------ */
+	public synchronized Object newInstance()
+			throws InstantiationException,
+			IllegalAccessException {
+		if (_class == null)
+			throw new InstantiationException("No class for " + this);
+		return _class.newInstance();
+	}
+
+	/* ------------------------------------------------------------ */
+	public boolean isStarted() {
+		return _class != null;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void stop() {
+		_class = null;
+	}
+
+	/* ------------------------------------------------------------ */
+	public String toString() {
+		return _name;
+	}
+
 }
 
 

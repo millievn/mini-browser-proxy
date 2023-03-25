@@ -14,30 +14,30 @@ import java.util.concurrent.TimeUnit;
  * between the proxy and the remote server already exceeds this value.
  */
 public class LatencyFilter extends HttpFiltersAdapter {
-    private static final Logger log = LoggerFactory.getLogger(HttpFiltersAdapter.class);
+	private static final Logger log = LoggerFactory.getLogger(HttpFiltersAdapter.class);
 
-    private final int latencyMs;
+	private final int latencyMs;
 
-    public LatencyFilter(HttpRequest originalRequest, int latencyMs) {
-        super(originalRequest);
+	public LatencyFilter(HttpRequest originalRequest, int latencyMs) {
+		super(originalRequest);
 
-        this.latencyMs = latencyMs;
-    }
+		this.latencyMs = latencyMs;
+	}
 
-    @Override
-    public HttpObject proxyToClientResponse(HttpObject httpObject) {
-        if (httpObject instanceof HttpResponse) {
-            if (latencyMs > 0) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(latencyMs);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+	@Override
+	public HttpObject proxyToClientResponse(HttpObject httpObject) {
+		if (httpObject instanceof HttpResponse) {
+			if (latencyMs > 0) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(latencyMs);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
 
-                    log.warn("Interrupted while adding latency to response", e);
-                }
-            }
-        }
+					log.warn("Interrupted while adding latency to response", e);
+				}
+			}
+		}
 
-        return super.proxyToClientResponse(httpObject);
-    }
+		return super.proxyToClientResponse(httpObject);
+	}
 }

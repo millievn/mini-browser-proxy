@@ -30,141 +30,141 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assume.assumeFalse;
 
 public class MailingListIssuesTest extends LocalServerTest {
-    @Test
-    public void testThatInterceptorIsCalled() throws IOException, InterruptedException {
-        assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
+	@Test
+	public void testThatInterceptorIsCalled() throws IOException, InterruptedException {
+		assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
 
-        final boolean[] interceptorHit = {false};
-        proxy.addRequestInterceptor(new RequestInterceptor() {
-            @Override
-            public void process(BrowserMobHttpRequest request, Har har) {
-                interceptorHit[0] = true;
-            }
-        });
+		final boolean[] interceptorHit = {false};
+		proxy.addRequestInterceptor(new RequestInterceptor() {
+			@Override
+			public void process(BrowserMobHttpRequest request, Har har) {
+				interceptorHit[0] = true;
+			}
+		});
 
-        String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
+		String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
 
-        Assert.assertTrue(body.contains("this is a.txt"));
-        Assert.assertTrue(interceptorHit[0]);
-    }
+		Assert.assertTrue(body.contains("this is a.txt"));
+		Assert.assertTrue(interceptorHit[0]);
+	}
 
-    @Test
-    public void testThatInterceptorCanCaptureCallingIpAddress() throws IOException, InterruptedException {
-        assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
+	@Test
+	public void testThatInterceptorCanCaptureCallingIpAddress() throws IOException, InterruptedException {
+		assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
 
-        final String[] remoteHost = {null};
-        proxy.addRequestInterceptor(new RequestInterceptor() {
-            @Override
-            public void process(BrowserMobHttpRequest request, Har har) {
-                remoteHost[0] = request.getProxyRequest().getRemoteHost();
-            }
-        });
+		final String[] remoteHost = {null};
+		proxy.addRequestInterceptor(new RequestInterceptor() {
+			@Override
+			public void process(BrowserMobHttpRequest request, Har har) {
+				remoteHost[0] = request.getProxyRequest().getRemoteHost();
+			}
+		});
 
-        String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
+		String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
 
-        Assert.assertTrue(body.contains("this is a.txt"));
-        Assert.assertEquals("Remote host incorrect", "127.0.0.1", remoteHost[0]);
-    }
+		Assert.assertTrue(body.contains("this is a.txt"));
+		Assert.assertEquals("Remote host incorrect", "127.0.0.1", remoteHost[0]);
+	}
 
-    @Test
-    public void testThatWeCanChangeTheUserAgent() throws IOException, InterruptedException {
-        assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
+	@Test
+	public void testThatWeCanChangeTheUserAgent() throws IOException, InterruptedException {
+		assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
 
-        proxy.addRequestInterceptor(new RequestInterceptor() {
-            @Override
-            public void process(BrowserMobHttpRequest request, Har har) {
-                request.getMethod().removeHeaders("User-Agent");
-                request.getMethod().addHeader("User-Agent", "Bananabot/1.0");
-            }
-        });
+		proxy.addRequestInterceptor(new RequestInterceptor() {
+			@Override
+			public void process(BrowserMobHttpRequest request, Har har) {
+				request.getMethod().removeHeaders("User-Agent");
+				request.getMethod().addHeader("User-Agent", "Bananabot/1.0");
+			}
+		});
 
-        String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
+		String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
 
-        Assert.assertTrue(body.contains("this is a.txt"));
-    }
+		Assert.assertTrue(body.contains("this is a.txt"));
+	}
 
-    @Test
-    public void testThatInterceptorsCanRewriteUrls() throws IOException, InterruptedException {
-        assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
+	@Test
+	public void testThatInterceptorsCanRewriteUrls() throws IOException, InterruptedException {
+		assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
 
-        proxy.addRequestInterceptor(new RequestInterceptor() {
-            @Override
-            public void process(BrowserMobHttpRequest request, Har har) {
-                try {
-                    request.getMethod().setURI(new URI(getLocalServerHostnameAndPort() + "/b.txt"));
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+		proxy.addRequestInterceptor(new RequestInterceptor() {
+			@Override
+			public void process(BrowserMobHttpRequest request, Har har) {
+				try {
+					request.getMethod().setURI(new URI(getLocalServerHostnameAndPort() + "/b.txt"));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
-        String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
+		String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
 
-        Assert.assertTrue(body.contains("this is b.txt"));
-    }
+		Assert.assertTrue(body.contains("this is b.txt"));
+	}
 
-    @Test
-    public void testThatInterceptorsCanReadResponseBodies() throws IOException, InterruptedException {
-        assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
+	@Test
+	public void testThatInterceptorsCanReadResponseBodies() throws IOException, InterruptedException {
+		assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
 
-        final String[] interceptedBody = {null};
+		final String[] interceptedBody = {null};
 
-        proxy.setCaptureContent(true);
-        proxy.addResponseInterceptor(new ResponseInterceptor() {
-            @Override
-            public void process(BrowserMobHttpResponse response, Har har) {
-                interceptedBody[0] = response.getEntry().getResponse().getContent().getText();
-            }
-        });
+		proxy.setCaptureContent(true);
+		proxy.addResponseInterceptor(new ResponseInterceptor() {
+			@Override
+			public void process(BrowserMobHttpResponse response, Har har) {
+				interceptedBody[0] = response.getEntry().getResponse().getContent().getText();
+			}
+		});
 
-        String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
+		String body = IOUtils.toStringAndClose(client.execute(new HttpGet(getLocalServerHostnameAndPort() + "/a.txt")).getEntity().getContent());
 
-        ThreadUtils.pollForCondition(new ThreadUtils.WaitCondition() {
-            @Override
-            public boolean checkCondition() {
-                return interceptedBody[0] != null;
-            }
-        }, 10, TimeUnit.SECONDS);
+		ThreadUtils.pollForCondition(new ThreadUtils.WaitCondition() {
+			@Override
+			public boolean checkCondition() {
+				return interceptedBody[0] != null;
+			}
+		}, 10, TimeUnit.SECONDS);
 
-        Assert.assertEquals(interceptedBody[0], body);
-    }
+		Assert.assertEquals(interceptedBody[0], body);
+	}
 
-    // @Ignoring this test because accessing the HttpRequest from the interceptor causes the connection to hang
-    @Test
-    @Ignore
-    public void testThatInterceptorsCanReadPostParamaters() throws IOException {
-        assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
+	// @Ignoring this test because accessing the HttpRequest from the interceptor causes the connection to hang
+	@Test
+	@Ignore
+	public void testThatInterceptorsCanReadPostParamaters() throws IOException {
+		assumeFalse(Boolean.getBoolean("bmp.use.littleproxy"));
 
-        proxy.setCaptureContent(true);
-        proxy.newHar("testThatInterceptorsCanReadPostParamaters");
+		proxy.setCaptureContent(true);
+		proxy.newHar("testThatInterceptorsCanReadPostParamaters");
 
-        final String[] capturedPostData = new String[2];
+		final String[] capturedPostData = new String[2];
 
-        proxy.addRequestInterceptor(new RequestInterceptor() {
-            @Override
-            public void process(BrowserMobHttpRequest request, Har har) {
-                capturedPostData[0] = request.getProxyRequest().getParameter("testParam");
-            }
-        });
+		proxy.addRequestInterceptor(new RequestInterceptor() {
+			@Override
+			public void process(BrowserMobHttpRequest request, Har har) {
+				capturedPostData[0] = request.getProxyRequest().getParameter("testParam");
+			}
+		});
 
-        HttpPost post = new HttpPost(getLocalServerHostnameAndPort() + "/echo");
-        HttpEntity entity = new StringEntity("testParam=testValue");
-        post.setEntity(entity);
-        post.addHeader("Content-Type", "application/x-www-form-urlencoded");
+		HttpPost post = new HttpPost(getLocalServerHostnameAndPort() + "/echo");
+		HttpEntity entity = new StringEntity("testParam=testValue");
+		post.setEntity(entity);
+		post.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-        EntityUtils.consumeQuietly(client.execute(post).getEntity());
+		EntityUtils.consumeQuietly(client.execute(post).getEntity());
 
-        Har har = proxy.getHar();
-        HarLog log = har.getLog();
-        List<HarEntry> entries = log.getEntries();
-        HarEntry entry = entries.get(0);
-        HarRequest request = entry.getRequest();
-        HarPostData postdata = request.getPostData();
-        capturedPostData[1] = postdata.getParams().get(0).getValue();
+		Har har = proxy.getHar();
+		HarLog log = har.getLog();
+		List<HarEntry> entries = log.getEntries();
+		HarEntry entry = entries.get(0);
+		HarRequest request = entry.getRequest();
+		HarPostData postdata = request.getPostData();
+		capturedPostData[1] = postdata.getParams().get(0).getValue();
 
-        Assert.assertNotNull("Interceptor POST data was null", capturedPostData[0]);
-        Assert.assertNotNull("HAR POST data was null", capturedPostData[1]);
-        Assert.assertEquals("POST param from interceptor does not match POST param captured in HAR", capturedPostData[1], capturedPostData[0]);
-    }
+		Assert.assertNotNull("Interceptor POST data was null", capturedPostData[0]);
+		Assert.assertNotNull("HAR POST data was null", capturedPostData[1]);
+		Assert.assertEquals("POST param from interceptor does not match POST param captured in HAR", capturedPostData[1], capturedPostData[0]);
+	}
 
 }

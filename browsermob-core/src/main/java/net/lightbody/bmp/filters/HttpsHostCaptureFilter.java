@@ -17,27 +17,27 @@ import org.littleshoot.proxy.impl.ProxyUtils;
  * Note: If the request uses the default HTTPS port (443), it will be removed from the hostname captured by this filter.
  */
 public class HttpsHostCaptureFilter extends HttpFiltersAdapter {
-    public HttpsHostCaptureFilter(HttpRequest originalRequest, ChannelHandlerContext ctx) {
-        super(originalRequest, ctx);
-    }
+	public HttpsHostCaptureFilter(HttpRequest originalRequest, ChannelHandlerContext ctx) {
+		super(originalRequest, ctx);
+	}
 
-    @Override
-    public HttpResponse clientToProxyRequest(HttpObject httpObject) {
-        if (httpObject instanceof HttpRequest) {
-            HttpRequest httpRequest = (HttpRequest) httpObject;
+	@Override
+	public HttpResponse clientToProxyRequest(HttpObject httpObject) {
+		if (httpObject instanceof HttpRequest) {
+			HttpRequest httpRequest = (HttpRequest) httpObject;
 
-            if (ProxyUtils.isCONNECT(httpRequest)) {
-                Attribute<String> hostname = ctx.attr(AttributeKey.<String>valueOf(HttpsAwareFiltersAdapter.HOST_ATTRIBUTE_NAME));
-                String hostAndPort = httpRequest.getUri();
+			if (ProxyUtils.isCONNECT(httpRequest)) {
+				Attribute<String> hostname = ctx.attr(AttributeKey.<String>valueOf(HttpsAwareFiltersAdapter.HOST_ATTRIBUTE_NAME));
+				String hostAndPort = httpRequest.getUri();
 
-                // CONNECT requests contain the port, even when using the default port. a sensible default is to remove the
-                // default port, since in most cases it is not explicitly specified and its presence (in a HAR file, for example)
-                // would be unexpected.
-                String hostNoDefaultPort = BrowserMobHttpUtil.removeMatchingPort(hostAndPort, 443);
-                hostname.set(hostNoDefaultPort);
-            }
-        }
+				// CONNECT requests contain the port, even when using the default port. a sensible default is to remove the
+				// default port, since in most cases it is not explicitly specified and its presence (in a HAR file, for example)
+				// would be unexpected.
+				String hostNoDefaultPort = BrowserMobHttpUtil.removeMatchingPort(hostAndPort, 443);
+				hostname.set(hostNoDefaultPort);
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

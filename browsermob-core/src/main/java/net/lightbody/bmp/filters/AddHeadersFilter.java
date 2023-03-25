@@ -13,28 +13,28 @@ import java.util.Map;
  * that the map at the time of construction will contain the same values when the filter is actually invoked, if the map is modified concurrently.
  */
 public class AddHeadersFilter extends HttpFiltersAdapter {
-    private final Map<String, String> additionalHeaders;
+	private final Map<String, String> additionalHeaders;
 
-    public AddHeadersFilter(HttpRequest originalRequest, Map<String, String> additionalHeaders) {
-        super(originalRequest);
+	public AddHeadersFilter(HttpRequest originalRequest, Map<String, String> additionalHeaders) {
+		super(originalRequest);
 
-        if (additionalHeaders != null) {
-            this.additionalHeaders = additionalHeaders;
-        } else {
-            this.additionalHeaders = Collections.emptyMap();
-        }
-    }
+		if (additionalHeaders != null) {
+			this.additionalHeaders = additionalHeaders;
+		} else {
+			this.additionalHeaders = Collections.emptyMap();
+		}
+	}
 
-    @Override
-    public HttpResponse clientToProxyRequest(HttpObject httpObject) {
-        if (httpObject instanceof HttpRequest) {
-            HttpRequest httpRequest = (HttpRequest) httpObject;
+	@Override
+	public HttpResponse clientToProxyRequest(HttpObject httpObject) {
+		if (httpObject instanceof HttpRequest) {
+			HttpRequest httpRequest = (HttpRequest) httpObject;
 
-            for (Map.Entry<String, String> header : additionalHeaders.entrySet()) {
-                httpRequest.headers().add(header.getKey(), header.getValue());
-            }
-        }
+			for (Map.Entry<String, String> header : additionalHeaders.entrySet()) {
+				httpRequest.headers().add(header.getKey(), header.getValue());
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

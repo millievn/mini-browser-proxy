@@ -27,116 +27,117 @@ import java.nio.charset.StandardCharsets;
  * Call getNewHttpClient() to get an HttpClient that can be used to make requests via the local proxy.
  */
 public abstract class ProxyServerTest {
-    private static final Logger log = LoggerFactory.getLogger(ProxyServerTest.class);
+	private static final Logger log = LoggerFactory.getLogger(ProxyServerTest.class);
 
-    /**
-     * The port the local proxy server is currently running on.
-     */
-    protected int proxyServerPort;
+	/**
+	 * The port the local proxy server is currently running on.
+	 */
+	protected int proxyServerPort;
 
-    /**
-     * This test's proxy server, running on 127.0.0.1.
-     */
-    protected LegacyProxyServer proxy;
+	/**
+	 * This test's proxy server, running on 127.0.0.1.
+	 */
+	protected LegacyProxyServer proxy;
 
-    /**
-     * This test's proxy server, running on 127.0.0.1. This is the same instance as the proxy.
-     */
-    protected BrowserMobProxy browserMobProxy;
+	/**
+	 * This test's proxy server, running on 127.0.0.1. This is the same instance as the proxy.
+	 */
+	protected BrowserMobProxy browserMobProxy;
 
-    /**
-     * CloseableHttpClient that will connect through the local proxy running on 127.0.0.1.
-     */
-    protected CloseableHttpClient client;
+	/**
+	 * CloseableHttpClient that will connect through the local proxy running on 127.0.0.1.
+	 */
+	protected CloseableHttpClient client;
 
-    /**
-     * CookieStore managing this instance's HttpClient's cookies.
-     */
-    protected CookieStore cookieStore;
+	/**
+	 * CookieStore managing this instance's HttpClient's cookies.
+	 */
+	protected CookieStore cookieStore;
 
-    @Before
-    public void startProxyServer() throws Exception {
-        this.proxy = createProxyServer();
-        this.browserMobProxy = (BrowserMobProxy) this.proxy;
-        proxy.start();
-        proxyServerPort = proxy.getPort();
+	@Before
+	public void startProxyServer() throws Exception {
+		this.proxy = createProxyServer();
+		this.browserMobProxy = (BrowserMobProxy) this.proxy;
+		proxy.start();
+		proxyServerPort = proxy.getPort();
 
-        cookieStore = new BasicCookieStore();
-        client = ProxyServerTestUtil.getNewHttpClient(proxyServerPort, cookieStore);
-    }
+		cookieStore = new BasicCookieStore();
+		client = ProxyServerTestUtil.getNewHttpClient(proxyServerPort, cookieStore);
+	}
 
-    /**
-     * Hook to allow tests to initialize the proxy server with a custom configuration, but still leverage the rest of the
-     * functionality in ProxyServerTest. The default implementation creates a new proxy server on port 0 (JVM-assigned port).
-     */
-    protected LegacyProxyServer createProxyServer() {
-        if (Boolean.getBoolean("bmp.use.littleproxy")) {
-            // HACK! since browsermob-core has no knowledge of littleproxy, we have to use reflection to grab the LP implementation
-            try {
-                Class<LegacyProxyServer> littleProxyImplClass = (Class<LegacyProxyServer>) Class.forName("net.lightbody.bmp.BrowserMobProxyServerLegacyAdapter");
-                LegacyProxyServer littleProxyImpl = littleProxyImplClass.newInstance();
+	/**
+	 * Hook to allow tests to initialize the proxy server with a custom configuration, but still leverage the rest of the
+	 * functionality in ProxyServerTest. The default implementation creates a new proxy server on port 0 (JVM-assigned port).
+	 */
+	protected LegacyProxyServer createProxyServer() {
+		if (Boolean.getBoolean("bmp.use.littleproxy")) {
+			// HACK! since browsermob-core has no knowledge of littleproxy, we have to use reflection to grab the LP implementation
+			try {
+				Class<LegacyProxyServer> littleProxyImplClass = (Class<LegacyProxyServer>) Class.forName("net.lightbody.bmp.BrowserMobProxyServerLegacyAdapter");
+				LegacyProxyServer littleProxyImpl = littleProxyImplClass.newInstance();
 
-                // set the trustAllServers option on the LP implementation to "true", to avoid certificate verification issues with MITM
-                Method setTrustAllServersMethod = littleProxyImplClass.getMethod("setTrustAllServers", Boolean.TYPE);
-                setTrustAllServersMethod.invoke(littleProxyImpl, true);
+				// set the trustAllServers option on the LP implementation to "true", to avoid certificate verification issues with MITM
+				Method setTrustAllServersMethod = littleProxyImplClass.getMethod("setTrustAllServers", Boolean.TYPE);
+				setTrustAllServersMethod.invoke(littleProxyImpl, true);
 
-                log.info("Using LittleProxy implementation to execute test for class: " + getClass().getSimpleName());
-                return littleProxyImpl;
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                throw new RuntimeException("The System property bmp.use.littleproxy was true, but the LittleProxy implementation could not be loaded.", e);
-            }
-        } else {
-            return new ProxyServer(0);
-        }
-    }
+				log.info("Using LittleProxy implementation to execute test for class: " + getClass().getSimpleName());
+				return littleProxyImpl;
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException |
+							 InvocationTargetException e) {
+				throw new RuntimeException("The System property bmp.use.littleproxy was true, but the LittleProxy implementation could not be loaded.", e);
+			}
+		} else {
+			return new ProxyServer(0);
+		}
+	}
 
-    @After
-    public void stopProxyServer() throws Exception {
-        try {
-            if (client != null) {
-                client.close();
-            }
-        } finally {
-            if (proxy != null) {
-                proxy.abort();
-            }
-        }
-    }
+	@After
+	public void stopProxyServer() throws Exception {
+		try {
+			if (client != null) {
+				client.close();
+			}
+		} finally {
+			if (proxy != null) {
+				proxy.abort();
+			}
+		}
+	}
 
-    /**
-     * Convenience method to perform an HTTP GET to the specified URL and return the response body. Closes the response before returning
-     * the body.
-     *
-     * @param url URL to HTTP GET
-     * @return response body from the server
-     */
-    public String getResponseBodyFromHost(String url) {
-        try {
-            CloseableHttpResponse response = getResponseFromHost(url);
+	/**
+	 * Convenience method to perform an HTTP GET to the specified URL and return the response body. Closes the response before returning
+	 * the body.
+	 *
+	 * @param url URL to HTTP GET
+	 * @return response body from the server
+	 */
+	public String getResponseBodyFromHost(String url) {
+		try {
+			CloseableHttpResponse response = getResponseFromHost(url);
 
-            String body = IOUtils.toStringAndClose(response.getEntity().getContent());
+			String body = IOUtils.toStringAndClose(response.getEntity().getContent());
 
-            response.close();
+			response.close();
 
-            return body;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+			return body;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    /**
-     * Convenience method to perform an HTTP GET to the specified URL and return the response object. The response is not closed, and so
-     * MUST be closed by the calling code.
-     *
-     * @param url URL to HTTP GET
-     * @return CloseableHttpResponse from the server
-     */
-    public CloseableHttpResponse getResponseFromHost(String url) {
-        HttpGet httpGet = new HttpGet(url);
-        try {
-            return client.execute(httpGet);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	/**
+	 * Convenience method to perform an HTTP GET to the specified URL and return the response object. The response is not closed, and so
+	 * MUST be closed by the calling code.
+	 *
+	 * @param url URL to HTTP GET
+	 * @return CloseableHttpResponse from the server
+	 */
+	public CloseableHttpResponse getResponseFromHost(String url) {
+		HttpGet httpGet = new HttpGet(url);
+		try {
+			return client.execute(httpGet);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

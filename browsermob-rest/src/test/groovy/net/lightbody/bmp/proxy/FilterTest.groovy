@@ -15,16 +15,9 @@ import org.mockserver.model.Header
 
 import static org.hamcrest.Matchers.endsWith
 import static org.hamcrest.Matchers.greaterThanOrEqualTo
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertThat
-import static org.junit.Assert.assertTrue
-import static org.junit.Assert.fail
+import static org.junit.Assert.*
 import static org.junit.Assume.assumeThat
-import static org.mockito.Matchers.any
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.never
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
+import static org.mockito.Mockito.*
 import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.response
 
@@ -47,9 +40,9 @@ class FilterTest extends ProxyResourceTest {
                 .withHeader(new Header("User-Agent", "My-Custom-User-Agent-String 1.0")),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withHeader(new Header("Content-Type", "text/plain"))
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withHeader(new Header("Content-Type", "text/plain"))
+                        .withBody("success"));
 
         HTTPBuilder http = getHttpBuilder()
 
@@ -85,9 +78,9 @@ class FilterTest extends ProxyResourceTest {
                 .withBody("modified request text"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8"))
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8"))
+                        .withBody("success"));
 
         HTTPBuilder http = getHttpBuilder()
 
@@ -122,9 +115,9 @@ class FilterTest extends ProxyResourceTest {
                 .withPath("/modifyresponse"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8"))
-                .withBody("original response text"));
+                        .withStatusCode(200)
+                        .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8"))
+                        .withBody("original response text"));
 
         HTTPBuilder http = getHttpBuilder()
 
@@ -161,9 +154,9 @@ class FilterTest extends ProxyResourceTest {
                 .withPath("/modifiedrequest"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8"))
-                .withBody("should-be-replaced"));
+                        .withStatusCode(200)
+                        .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8"))
+                        .withBody("should-be-replaced"));
 
         HTTPBuilder http = getHttpBuilder()
 

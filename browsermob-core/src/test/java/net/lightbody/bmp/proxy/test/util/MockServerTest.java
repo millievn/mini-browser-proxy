@@ -8,19 +8,19 @@ import org.mockserver.integration.ClientAndServer;
  * Tests can subclass this to get access to a ClientAndServer instance for creating mock responses.
  */
 public class MockServerTest {
-    protected ClientAndServer mockServer;
-    protected int mockServerPort;
+	protected ClientAndServer mockServer;
+	protected int mockServerPort;
 
-    @Before
-    public void setUpMockServer() {
-        mockServer = new ClientAndServer(0);
-        mockServerPort = mockServer.getPort();
-    }
+	@Before
+	public void setUpMockServer() {
+		mockServer = new ClientAndServer(0);
+		mockServerPort = mockServer.getPort();
+	}
 
-    @After
-    public void tearDownMockServer() {
-        if (mockServer != null) {
-            mockServer.stop();
-        }
-    }
+	@After
+	public void tearDownMockServer() {
+		if (mockServer != null) {
+			mockServer.stop();
+		}
+	}
 }

@@ -21,25 +21,21 @@ import java.util.EventObject;
  * @author gregw
  * Event for a LifeCycleListener.
  */
-public class LifeCycleEvent extends EventObject
-{
-    Throwable cause;
-    
-    public LifeCycleEvent(Object source)
-    {
-        super(source);
-    }
-    
-    public LifeCycleEvent(Object source, Throwable cause)
-    {
-        super(source);
-        this.cause=cause;
-    }
-    
-    public Throwable getCause()
-    {
-        return cause;
-    }
+public class LifeCycleEvent extends EventObject {
+	Throwable cause;
+
+	public LifeCycleEvent(Object source) {
+		super(source);
+	}
+
+	public LifeCycleEvent(Object source, Throwable cause) {
+		super(source);
+		this.cause = cause;
+	}
+
+	public Throwable getCause() {
+		return cause;
+	}
 }
 
 

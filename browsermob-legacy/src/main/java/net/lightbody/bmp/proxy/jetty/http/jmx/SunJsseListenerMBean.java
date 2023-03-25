@@ -19,27 +19,27 @@ import javax.management.MBeanException;
 
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.3 $
- * @author Greg Wilkins (gregw)
- */
-public class SunJsseListenerMBean extends JsseListenerMBean
-{
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     */
-    public SunJsseListenerMBean()
-        throws MBeanException
-    {
-        super();
-    }
 
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("keystore");
-    }
+/**
+ * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.3 $
+ */
+public class SunJsseListenerMBean extends JsseListenerMBean {
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public SunJsseListenerMBean()
+			throws MBeanException {
+		super();
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("keystore");
+	}
 }

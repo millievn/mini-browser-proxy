@@ -16,42 +16,58 @@
 package net.lightbody.bmp.proxy.jetty.html;
 
 /* -------------------------------------------------------------------- */
-/** Break Tag.
- */
-public class Break extends Tag
-{
-    /* ---------------------------------------------------------------- */
-    /** Line Break tag type */
-    public final static String Line="br";
-    /** Rule Break tag type */
-    public final static String Rule="hr";
-    /** Paragraph Break tag type */
-    public final static String Para="p";
 
-    /* ---------------------------------------------------------------- */
-    /** Default constructor (Line Break).
-     */
-    public Break()
-    {
-        this(Line);
-    }
-    
-    /* ---------------------------------------------------------------- */
-    /** Constructor.
-     * @param type The Break type
-     */
-    public Break(String type)
-    {
-        super(type);
-    }
-    
-    /* ---------------------------------------------------------------- */
-    /** Static instance of line break */
-    public final static Break line=new Break(Line);
-    /** Static instance of rule break */
-    public final static Break rule=new Break(Rule);
-    /** Static instance of paragraph break */
-    public final static Break para=new Break(Para);
+/**
+ * Break Tag.
+ */
+public class Break extends Tag {
+	/* ---------------------------------------------------------------- */
+	/**
+	 * Line Break tag type
+	 */
+	public final static String Line = "br";
+	/**
+	 * Rule Break tag type
+	 */
+	public final static String Rule = "hr";
+	/**
+	 * Paragraph Break tag type
+	 */
+	public final static String Para = "p";
+
+	/* ---------------------------------------------------------------- */
+
+	/**
+	 * Default constructor (Line Break).
+	 */
+	public Break() {
+		this(Line);
+	}
+
+	/* ---------------------------------------------------------------- */
+
+	/**
+	 * Constructor.
+	 *
+	 * @param type The Break type
+	 */
+	public Break(String type) {
+		super(type);
+	}
+
+	/* ---------------------------------------------------------------- */
+	/**
+	 * Static instance of line break
+	 */
+	public final static Break line = new Break(Line);
+	/**
+	 * Static instance of rule break
+	 */
+	public final static Break rule = new Break(Rule);
+	/**
+	 * Static instance of paragraph break
+	 */
+	public final static Break para = new Break(Para);
 
 }
 

@@ -1,5 +1,7 @@
 # New BrowserMobProxy interface
-The `BrowserMobProxyServer` class, powered by LitleProxy, implements the ``BrowserMobProxy` interface. The following table lists the current level of support for the new interface in the modern and legacy BMP implementations:
+
+The `BrowserMobProxyServer` class, powered by LitleProxy, implements the ``BrowserMobProxy` interface. The following
+table lists the current level of support for the new interface in the modern and legacy BMP implementations:
 
 `BrowserMobProxy` method | Legacy `ProxyServer` (Jetty 5) | `BrowserMobProxyServer` (LittleProxy)
 :----------------------- | :---------------------: | :-----------------------------------:
@@ -57,14 +59,22 @@ The `BrowserMobProxyServer` class, powered by LitleProxy, implements the ``Brows
 `addRequestFilter` | [Will not support](#interceptors) | X
 
 # Limitations
+
 ## Interceptors
-Interceptors are tightly coupled to the underlying BrowserMob Proxy implementation (Jetty 5 or LittleProxy). As a result,
-the Jetty 5-based `ProxyServer` implementation will continue to support the legacy interceptor methods, `addRequestInterceptor`
-and `addResponseInterceptor`, but **will not support the new interceptor methods in `BrowserMobProxy`**. The new LittleProxy-based
-implementation will fully support the new interceptor methods (`addResponseFilter`, `addRequestFilter`, `addFirstHttpFilterFactory` 
+
+Interceptors are tightly coupled to the underlying BrowserMob Proxy implementation (Jetty 5 or LittleProxy). As a
+result,
+the Jetty 5-based `ProxyServer` implementation will continue to support the legacy interceptor
+methods, `addRequestInterceptor`
+and `addResponseInterceptor`, but **will not support the new interceptor methods in `BrowserMobProxy`**. The new
+LittleProxy-based
+implementation will fully support the new interceptor methods (`addResponseFilter`, `addRequestFilter`
+, `addFirstHttpFilterFactory`
 and `addLastHttpFilterFactory`), and will not support the legacy interceptor methods.
 
-To continue using interceptors with the Jetty 5-based implementation, downcast to `LegacyProxyServer` when adding the interceptor:
+To continue using interceptors with the Jetty 5-based implementation, downcast to `LegacyProxyServer` when adding the
+interceptor:
+
 ```java
         BrowserMobProxy legacyImpl = new ProxyServer();
         ((LegacyProxyServer)legacyImpl).addRequestInterceptor(new RequestInterceptor() {
@@ -76,17 +86,27 @@ To continue using interceptors with the Jetty 5-based implementation, downcast t
 ```
 
 ## DNS resolvers
-Both the legacy and new LittleProxy-based implementations support the new get/setHostNameResolver methods. The legacy implementation uses XBill/dnsjava by default, with failover to native JVM name resolution enabled by default. The LittleProxy implementation uses native name resolution by default, but fully supports the DnsJavaResolver when calling the setHostNameResolver method.
+
+Both the legacy and new LittleProxy-based implementations support the new get/setHostNameResolver methods. The legacy
+implementation uses XBill/dnsjava by default, with failover to native JVM name resolution enabled by default. The
+LittleProxy implementation uses native name resolution by default, but fully supports the DnsJavaResolver when calling
+the setHostNameResolver method.
 
 ## Server bind address
+
 The legacy implementation does not support server bind addresses. LittleProxy fully supports server bind addresses.
 
 ## HAR capture types
-The legacy implementation supports all HAR capture types, but does not support controlling request and response capture types separately
-(e.g. enabling content capture only for requests). Additionally, the Jetty 5 implementation does not allow disabling cookie capture.
+
+The legacy implementation supports all HAR capture types, but does not support controlling request and response capture
+types separately
+(e.g. enabling content capture only for requests). Additionally, the Jetty 5 implementation does not allow disabling
+cookie capture.
 
 ## Timeouts
+
 The new LittleProxy implementation requires that all timeouts be set before calling a `start()` method.
 
 ## Auto authorization
+
 The legacy implementation does not support the `stopAutoAuthorization` method.

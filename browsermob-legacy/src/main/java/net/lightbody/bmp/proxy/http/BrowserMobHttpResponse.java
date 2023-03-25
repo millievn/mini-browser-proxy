@@ -6,48 +6,48 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
 public class BrowserMobHttpResponse {
-    private HarEntry entry;
-    private HttpRequestBase method;
-    private HttpResponse response;
-    private String errorMessage;
-    private String contentType;
-    private String charSet;
+	private HarEntry entry;
+	private HttpRequestBase method;
+	private HttpResponse response;
+	private String errorMessage;
+	private String contentType;
+	private String charSet;
 
-    public BrowserMobHttpResponse(HarEntry entry, HttpRequestBase method, HttpResponse response, String errorMessage, String contentType, String charSet) {
-        this.entry = entry;
-        this.method = method;
-        this.response = response;
-        this.errorMessage = errorMessage;
-        this.contentType = contentType;
-        this.charSet = charSet;
-    }
+	public BrowserMobHttpResponse(HarEntry entry, HttpRequestBase method, HttpResponse response, String errorMessage, String contentType, String charSet) {
+		this.entry = entry;
+		this.method = method;
+		this.response = response;
+		this.errorMessage = errorMessage;
+		this.contentType = contentType;
+		this.charSet = charSet;
+	}
 
-    public String getContentType() {
-        return contentType;
-    }
+	public String getContentType() {
+		return contentType;
+	}
 
-    public String getCharSet() {
-        return charSet;
-    }
+	public String getCharSet() {
+		return charSet;
+	}
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+	public String getErrorMessage() {
+		return errorMessage;
+	}
 
-    public String getHeader(String name) {
-        Header header = response.getFirstHeader(name);
-        if (header == null) {
-            return null;
-        }
+	public String getHeader(String name) {
+		Header header = response.getFirstHeader(name);
+		if (header == null) {
+			return null;
+		}
 
-        return header.getValue();
-    }
+		return header.getValue();
+	}
 
-    public HttpResponse getRawResponse() {
-        return response;
-    }
+	public HttpResponse getRawResponse() {
+		return response;
+	}
 
-    public HarEntry getEntry() {
-        return entry;
-    }
+	public HarEntry getEntry() {
+		return entry;
+	}
 }

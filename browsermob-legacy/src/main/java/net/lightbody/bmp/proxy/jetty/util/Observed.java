@@ -18,20 +18,19 @@ package net.lightbody.bmp.proxy.jetty.util;
 import java.util.Observable;
 
 /* ======================================================================== */
-/** Helpful extension to Observable.
+
+/**
+ * Helpful extension to Observable.
  * NotifyObservers will set a changed first.
  */
-public class Observed  extends Observable
-{
-    public void notifyObservers(Object arg)
-    {
-        setChanged();
-        super.notifyObservers(arg);
-    }
+public class Observed extends Observable {
+	public void notifyObservers(Object arg) {
+		setChanged();
+		super.notifyObservers(arg);
+	}
 
-    public void notifyObservers()
-    {
-        setChanged();
-        super.notifyObservers(null);
-    }
+	public void notifyObservers() {
+		setChanged();
+		super.notifyObservers(null);
+	}
 }

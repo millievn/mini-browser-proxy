@@ -3,13 +3,7 @@ package net.lightbody.bmp.proxy
 import com.google.common.collect.Iterables
 import net.lightbody.bmp.BrowserMobProxy
 import net.lightbody.bmp.BrowserMobProxyServer
-import net.lightbody.bmp.core.har.Har
-import net.lightbody.bmp.core.har.HarContent
-import net.lightbody.bmp.core.har.HarCookie
-import net.lightbody.bmp.core.har.HarEntry
-import net.lightbody.bmp.core.har.HarNameValuePair
-import net.lightbody.bmp.core.har.HarResponse
-import net.lightbody.bmp.core.har.HarTimings
+import net.lightbody.bmp.core.har.*
 import net.lightbody.bmp.filters.util.HarCaptureUtil
 import net.lightbody.bmp.proxy.dns.AdvancedHostResolver
 import net.lightbody.bmp.proxy.test.util.MockServerTest
@@ -27,17 +21,8 @@ import org.mockserver.model.Header
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
-import static org.hamcrest.Matchers.empty
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.greaterThan
-import static org.hamcrest.Matchers.greaterThanOrEqualTo
-import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.not
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNull
-import static org.junit.Assert.assertThat
+import static org.hamcrest.Matchers.*
+import static org.junit.Assert.*
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
 import static org.mockserver.model.HttpRequest.request
@@ -74,8 +59,8 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testDnsTimingPopulated"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withBody("success"));
 
         proxy = new BrowserMobProxyServer();
         proxy.setHostNameResolver(mockResolver);
@@ -109,10 +94,10 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testCaptureResponseCookiesInHar"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success")
-                .withHeader("Set-Cookie", "max-age-cookie=mock-value; Max-Age=3153600000")
-                .withHeader("Set-Cookie", "expires-cookie=mock-value; Expires=Wed, 15 Mar 2022 12:00:00 GMT"))
+                        .withStatusCode(200)
+                        .withBody("success")
+                        .withHeader("Set-Cookie", "max-age-cookie=mock-value; Max-Age=3153600000")
+                        .withHeader("Set-Cookie", "expires-cookie=mock-value; Expires=Wed, 15 Mar 2022 12:00:00 GMT"))
 
         proxy = new BrowserMobProxyServer();
         proxy.setHarCaptureTypes([CaptureType.RESPONSE_COOKIES] as Set)
@@ -158,9 +143,9 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testCaptureResponseHeaderInHar"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success")
-                .withHeader(new Header("Mock-Header", "mock value")))
+                        .withStatusCode(200)
+                        .withBody("success")
+                        .withHeader(new Header("Mock-Header", "mock value")))
 
         proxy = new BrowserMobProxyServer();
         proxy.setHarCaptureTypes([CaptureType.RESPONSE_HEADERS] as Set)
@@ -196,9 +181,9 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testCaptureResponseContentInHar"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody(expectedResponseBody)
-                .withHeader(new Header("Content-Type", responseContentType)))
+                        .withStatusCode(200)
+                        .withBody(expectedResponseBody)
+                        .withHeader(new Header("Content-Type", responseContentType)))
 
         proxy = new BrowserMobProxyServer();
         proxy.setHarCaptureTypes(CaptureType.RESPONSE_CONTENT)
@@ -235,9 +220,9 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testCaptureResponseContentInHar"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody(expectedResponseBody)
-                .withHeader(new Header("Content-Type", responseContentType)))
+                        .withStatusCode(200)
+                        .withBody(expectedResponseBody)
+                        .withHeader(new Header("Content-Type", responseContentType)))
 
         proxy = new BrowserMobProxyServer();
         proxy.setHarCaptureTypes([] as Set)
@@ -270,9 +255,9 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testEndHar"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success")
-                .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8")))
+                        .withStatusCode(200)
+                        .withBody("success")
+                        .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8")))
 
         proxy = new BrowserMobProxyServer();
         proxy.setHarCaptureTypes([CaptureType.RESPONSE_CONTENT] as Set)
@@ -281,7 +266,8 @@ class NewHarTest extends MockServerTest {
         proxy.newHar()
 
         // putting tests in code blocks to avoid variable name collisions
-        regularHarCanCapture: {
+        regularHarCanCapture:
+        {
             NewProxyServerTestUtil.getNewHttpClient(proxy.port).withCloseable {
                 String responseBody = NewProxyServerTestUtil.toStringAndClose(it.execute(new HttpGet("http://localhost:${mockServerPort}/testEndHar")).getEntity().getContent());
                 assertEquals("Did not receive expected response from mock server", "success", responseBody);
@@ -300,13 +286,15 @@ class NewHarTest extends MockServerTest {
             assertThat("Expected HAR page timing onLoad value to be populated", har.log.pages.last().pageTimings.onLoad, greaterThan(0L))
         }
 
-        harEmptyAfterEnd: {
+        harEmptyAfterEnd:
+        {
             Har emptyHar = proxy.getHar()
 
             assertNull("Expected getHar() to return null after calling endHar()", emptyHar)
         }
 
-        harStillEmptyAfterRequest: {
+        harStillEmptyAfterRequest:
+        {
             NewProxyServerTestUtil.getNewHttpClient(proxy.port).withCloseable {
                 String responseBody = NewProxyServerTestUtil.toStringAndClose(it.execute(new HttpGet("http://localhost:${mockServerPort}/testEndHar")).getEntity().getContent());
                 assertEquals("Did not receive expected response from mock server", "success", responseBody);
@@ -318,13 +306,15 @@ class NewHarTest extends MockServerTest {
             assertNull("Expected getHar() to return null after calling endHar()", stillEmptyHar)
         }
 
-        newHarInitiallyEmpty: {
+        newHarInitiallyEmpty:
+        {
             Har newHar = proxy.newHar()
 
             assertNull("Expected newHar() to return the old (null) har", newHar)
         }
 
-        newHarCanCapture: {
+        newHarCanCapture:
+        {
             NewProxyServerTestUtil.getNewHttpClient(proxy.port).withCloseable {
                 String responseBody = NewProxyServerTestUtil.toStringAndClose(it.execute(new HttpGet("http://localhost:${mockServerPort}/testEndHar")).getEntity().getContent());
                 assertEquals("Did not receive expected response from mock server", "success", responseBody);
@@ -349,9 +339,9 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testEndHar"),
                 Times.unlimited())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success")
-                .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8")))
+                        .withStatusCode(200)
+                        .withBody("success")
+                        .withHeader(new Header("Content-Type", "text/plain; charset=UTF-8")))
 
         proxy = new BrowserMobProxyServer();
         proxy.setHarCaptureTypes([CaptureType.RESPONSE_CONTENT] as Set)
@@ -401,8 +391,8 @@ class NewHarTest extends MockServerTest {
                 .withPath("/httprequesturlcaptured"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.start()
@@ -433,8 +423,8 @@ class NewHarTest extends MockServerTest {
                 .withQueryStringParameter("param1", "value1"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.start()
@@ -470,8 +460,8 @@ class NewHarTest extends MockServerTest {
                 .withQueryStringParameter("param1", "value1"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)
@@ -509,8 +499,8 @@ class NewHarTest extends MockServerTest {
                 .withQueryStringParameter("param1", "value1"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.rewriteUrl("https://localhost:${mockServerPort}/originalurl(.*)", "https://localhost:${mockServerPort}/httpsrewrittenurlcaptured\$1")
@@ -551,16 +541,16 @@ class NewHarTest extends MockServerTest {
                 .withPath("/httpmitmdisabled"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("Response over HTTP"))
+                        .withStatusCode(200)
+                        .withBody("Response over HTTP"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/httpsmitmdisabled"),
                 Times.exactly(2))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("Response over HTTPS"))
+                        .withStatusCode(200)
+                        .withBody("Response over HTTPS"))
 
         proxy = new BrowserMobProxyServer();
         proxy.setMitmDisabled(true);
@@ -568,7 +558,8 @@ class NewHarTest extends MockServerTest {
 
         proxy.newHar()
 
-        httpsRequest: {
+        httpsRequest:
+        {
             String httpsUrl = "https://localhost:${mockServerPort}/httpsmitmdisabled"
             NewProxyServerTestUtil.getNewHttpClient(proxy.port).withCloseable {
                 String responseBody = NewProxyServerTestUtil.toStringAndClose(it.execute(new HttpGet(httpsUrl)).getEntity().getContent());
@@ -581,7 +572,8 @@ class NewHarTest extends MockServerTest {
             assertThat("Expected to find no entries in the HAR because MITM is disabled", har.getLog().getEntries(), empty())
         }
 
-        httpRequest: {
+        httpRequest:
+        {
             String httpUrl = "http://localhost:${mockServerPort}/httpmitmdisabled"
             NewProxyServerTestUtil.getNewHttpClient(proxy.port).withCloseable {
                 String responseBody = NewProxyServerTestUtil.toStringAndClose(it.execute(new HttpGet(httpUrl)).getEntity().getContent());
@@ -597,7 +589,8 @@ class NewHarTest extends MockServerTest {
             assertEquals("URL captured in HAR did not match request URL", httpUrl, capturedUrl)
         }
 
-        secondHttpsRequest: {
+        secondHttpsRequest:
+        {
             String httpsUrl = "https://localhost:${mockServerPort}/httpsmitmdisabled"
             NewProxyServerTestUtil.getNewHttpClient(proxy.port).withCloseable {
                 String responseBody = NewProxyServerTestUtil.toStringAndClose(it.execute(new HttpGet(httpsUrl)).getEntity().getContent());
@@ -809,9 +802,9 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testResponseTimeoutCapturedInHar"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withDelay(TimeUnit.SECONDS, 10)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withDelay(TimeUnit.SECONDS, 10)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.setIdleConnectionTimeout(3, TimeUnit.SECONDS)
@@ -868,9 +861,9 @@ class NewHarTest extends MockServerTest {
                 .withPath("/testResponseTimeoutCapturedInHar"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(200)
-                .withDelay(TimeUnit.SECONDS, 10)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withDelay(TimeUnit.SECONDS, 10)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer();
         proxy.setTrustAllServers(true)
@@ -928,47 +921,47 @@ class NewHarTest extends MockServerTest {
                 .withPath("/test300"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(300)
-                .withHeader("Location", "/redirected-location"))
+                        .withStatusCode(300)
+                        .withHeader("Location", "/redirected-location"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/test301"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(301)
-                .withHeader("Location", "/redirected-location"))
+                        .withStatusCode(301)
+                        .withHeader("Location", "/redirected-location"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/test302"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(302)
-                .withHeader("Location", "/redirected-location"))
+                        .withStatusCode(302)
+                        .withHeader("Location", "/redirected-location"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/test303"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(303)
-                .withHeader("Location", "/redirected-location"))
+                        .withStatusCode(303)
+                        .withHeader("Location", "/redirected-location"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/test307"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(307)
-                .withHeader("Location", "/redirected-location"))
+                        .withStatusCode(307)
+                        .withHeader("Location", "/redirected-location"))
 
         mockServer.when(request()
                 .withMethod("GET")
                 .withPath("/test301-no-location-header"),
                 Times.once())
                 .respond(response()
-                .withStatusCode(301))
+                        .withStatusCode(301))
 
         proxy = new BrowserMobProxyServer();
         proxy.start()

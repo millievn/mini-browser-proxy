@@ -38,20 +38,20 @@ import java.security.KeyStore;
  */
 public class InsecureTrustManagerFactory extends SimpleTrustManagerFactory {
 
-    public static final TrustManagerFactory INSTANCE = new InsecureTrustManagerFactory();
+	public static final TrustManagerFactory INSTANCE = new InsecureTrustManagerFactory();
 
-    public static final X509ExtendedTrustManager tm = new InsecureExtendedTrustManager();
+	public static final X509ExtendedTrustManager tm = new InsecureExtendedTrustManager();
 
-    @Override
-    protected void engineInit(KeyStore keyStore) throws Exception {
-    }
+	@Override
+	protected void engineInit(KeyStore keyStore) throws Exception {
+	}
 
-    @Override
-    protected void engineInit(ManagerFactoryParameters managerFactoryParameters) throws Exception {
-    }
+	@Override
+	protected void engineInit(ManagerFactoryParameters managerFactoryParameters) throws Exception {
+	}
 
-    @Override
-    protected TrustManager[] engineGetTrustManagers() {
-        return new TrustManager[]{tm};
-    }
+	@Override
+	protected TrustManager[] engineGetTrustManagers() {
+		return new TrustManager[]{tm};
+	}
 }

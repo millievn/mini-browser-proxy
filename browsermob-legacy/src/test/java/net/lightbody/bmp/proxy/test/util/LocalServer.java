@@ -22,86 +22,86 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <b>Note:</b> Call getPort() <b>after</b> calling start() to get the port the server is bound to.
  */
 public class LocalServer {
-    private int port;
-    private Server server;
+	private int port;
+	private Server server;
 
-    private static Logger log = LoggerFactory.getLogger(LocalServer.class);
+	private static Logger log = LoggerFactory.getLogger(LocalServer.class);
 
-    private static final AtomicBoolean started = new AtomicBoolean(false);
+	private static final AtomicBoolean started = new AtomicBoolean(false);
 
-    public void start() {
-        server = new Server(0);
+	public void start() {
+		server = new Server(0);
 
-        HandlerList handlers = new HandlerList();
+		HandlerList handlers = new HandlerList();
 
-        // create a ServletHandler and add unit test servlets to it
-        ServletHandler servletHandler = new ServletHandler();
+		// create a ServletHandler and add unit test servlets to it
+		ServletHandler servletHandler = new ServletHandler();
 
-        servletHandler.addServletWithMapping(JsonServlet.class, "/jsonrpc");
-        servletHandler.addServletWithMapping(SetCookieServlet.class, "/cookie");
-        servletHandler.addServletWithMapping(EchoServlet.class, "/echo");
-        servletHandler.addServletWithMapping(EchoPayloadServlet.class, "/echopayload");
+		servletHandler.addServletWithMapping(JsonServlet.class, "/jsonrpc");
+		servletHandler.addServletWithMapping(SetCookieServlet.class, "/cookie");
+		servletHandler.addServletWithMapping(EchoServlet.class, "/echo");
+		servletHandler.addServletWithMapping(EchoPayloadServlet.class, "/echopayload");
 
-        handlers.addHandler(servletHandler);
+		handlers.addHandler(servletHandler);
 
-        // create a ResourceHandler to serve up static resources from the classpath at /local-server
-        ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setBaseResource(Resource.newClassPathResource("/local-server"));
+		// create a ResourceHandler to serve up static resources from the classpath at /local-server
+		ResourceHandler resourceHandler = new ResourceHandler();
+		resourceHandler.setBaseResource(Resource.newClassPathResource("/local-server"));
 
-        handlers.addHandler(resourceHandler);
+		handlers.addHandler(resourceHandler);
 
-        // wrap the other handlers in a GzipHandler that does not gzip anything by default
-        GzipHandler gzipHandler = new GzipHandler();
-        gzipHandler.setMinGzipSize(Integer.MAX_VALUE);
-        gzipHandler.setHandler(handlers);
+		// wrap the other handlers in a GzipHandler that does not gzip anything by default
+		GzipHandler gzipHandler = new GzipHandler();
+		gzipHandler.setMinGzipSize(Integer.MAX_VALUE);
+		gzipHandler.setHandler(handlers);
 
-        server.setHandler(gzipHandler);
+		server.setHandler(gzipHandler);
 
-        try {
-            server.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not start local Jetty server for tests", e);
-        }
+		try {
+			server.start();
+		} catch (Exception e) {
+			throw new RuntimeException("Could not start local Jetty server for tests", e);
+		}
 
-        this.port = server.getConnectors()[0].getLocalPort();
+		this.port = server.getConnectors()[0].getLocalPort();
 
-        started.set(true);
-    }
+		started.set(true);
+	}
 
-    public int getPort() {
-        // simple sanity check to fail fast on incorrect unit tests
-        if (!started.get()) {
-            throw new IllegalStateException("Cannot get test server port until server is started. Call start() first.");
-        }
+	public int getPort() {
+		// simple sanity check to fail fast on incorrect unit tests
+		if (!started.get()) {
+			throw new IllegalStateException("Cannot get test server port until server is started. Call start() first.");
+		}
 
-        return this.port;
-    }
+		return this.port;
+	}
 
-    /**
-     * Forces the server to gzip all responses (see {@link org.eclipse.jetty.server.handler.GzipHandler} for response codes that will
-     * be gzipped).
-     */
-    public void forceGzip() {
-        GzipHandler gzipHandler = (GzipHandler) server.getHandler();
-        gzipHandler.setMinGzipSize(1);
-    }
+	/**
+	 * Forces the server to gzip all responses (see {@link org.eclipse.jetty.server.handler.GzipHandler} for response codes that will
+	 * be gzipped).
+	 */
+	public void forceGzip() {
+		GzipHandler gzipHandler = (GzipHandler) server.getHandler();
+		gzipHandler.setMinGzipSize(1);
+	}
 
-    /**
-     * Forces the server to NOT gzip any responses.
-     */
-    public void disableGzip() {
-        GzipHandler gzipHandler = (GzipHandler) server.getHandler();
-        gzipHandler.setMinGzipSize(Integer.MAX_VALUE);
-    }
+	/**
+	 * Forces the server to NOT gzip any responses.
+	 */
+	public void disableGzip() {
+		GzipHandler gzipHandler = (GzipHandler) server.getHandler();
+		gzipHandler.setMinGzipSize(Integer.MAX_VALUE);
+	}
 
-    public void stop() {
-        try {
-            if (server != null) {
-                server.stop();
-            }
-        } catch (Exception e) {
-            log.error("Could not stop local Jetty server for tests", e);
-        }
-    }
+	public void stop() {
+		try {
+			if (server != null) {
+				server.stop();
+			}
+		} catch (Exception e) {
+			log.error("Could not stop local Jetty server for tests", e);
+		}
+	}
 
 }

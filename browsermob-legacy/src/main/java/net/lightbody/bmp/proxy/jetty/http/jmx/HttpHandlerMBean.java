@@ -20,25 +20,26 @@ import net.lightbody.bmp.proxy.jetty.util.jmx.LifeCycleMBean;
 import javax.management.MBeanException;
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.3 $
+
+/**
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.3 $
  */
-public class HttpHandlerMBean extends LifeCycleMBean
-{
-    /* ------------------------------------------------------------ */
-    /** Constructor. 
-     * @exception MBeanException 
-     */
-    public HttpHandlerMBean()
-        throws MBeanException
-    {}
-    
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("name"); 
-    }    
+public class HttpHandlerMBean extends LifeCycleMBean {
+	/* ------------------------------------------------------------ */
+
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public HttpHandlerMBean()
+			throws MBeanException {
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("name");
+	}
 }

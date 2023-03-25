@@ -18,14 +18,15 @@ package net.lightbody.bmp.proxy.jetty.util;
 
 
 /* ------------------------------------------------------------ */
-/** Utility handling of primitive types 
+
+/**
+ * Utility handling of primitive types
  *
- * @version $Revision: 1.5 $
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.5 $
  * @deprecated Use TypeUtil
  */
-public class Primitive extends TypeUtil
-{
+public class Primitive extends TypeUtil {
 }
 
         

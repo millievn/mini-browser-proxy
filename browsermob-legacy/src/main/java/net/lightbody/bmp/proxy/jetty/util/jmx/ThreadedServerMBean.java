@@ -20,37 +20,33 @@ import net.lightbody.bmp.proxy.jetty.util.ThreadedServer;
 import javax.management.MBeanException;
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.9 $
- * @author Greg Wilkins (gregw)
- */
-public class ThreadedServerMBean extends ThreadPoolMBean
-{
-    /* ------------------------------------------------------------ */
-    public ThreadedServerMBean()
-        throws MBeanException
-    {
-        super();
-    }
-    
-    /* ------------------------------------------------------------ */
-    public ThreadedServerMBean(ThreadedServer object)
-        throws MBeanException
-    {
-        super(object);
-    }
-    
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
 
-        defineAttribute("host");
-        defineAttribute("port");
-        defineAttribute("tcpNoDelay");
-        defineAttribute("lingerTimeSecs");
-        defineAttribute("acceptQueueSize");
-        defineAttribute("acceptorThreads");
-    }    
+/**
+ * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.9 $
+ */
+public class ThreadedServerMBean extends ThreadPoolMBean {
+	/* ------------------------------------------------------------ */
+	public ThreadedServerMBean()
+			throws MBeanException {
+		super();
+	}
+
+	/* ------------------------------------------------------------ */
+	public ThreadedServerMBean(ThreadedServer object)
+			throws MBeanException {
+		super(object);
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+
+		defineAttribute("host");
+		defineAttribute("port");
+		defineAttribute("tcpNoDelay");
+		defineAttribute("lingerTimeSecs");
+		defineAttribute("acceptQueueSize");
+		defineAttribute("acceptorThreads");
+	}
 }

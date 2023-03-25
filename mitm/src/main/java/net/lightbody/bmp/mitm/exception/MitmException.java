@@ -5,20 +5,20 @@ package net.lightbody.bmp.mitm.exception;
  * upstream server.
  */
 public class MitmException extends RuntimeException {
-    private static final long serialVersionUID = -1960691906515767537L;
+	private static final long serialVersionUID = -1960691906515767537L;
 
-    public MitmException() {
-    }
+	public MitmException() {
+	}
 
-    public MitmException(String message) {
-        super(message);
-    }
+	public MitmException(String message) {
+		super(message);
+	}
 
-    public MitmException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public MitmException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public MitmException(Throwable cause) {
-        super(cause);
-    }
+	public MitmException(Throwable cause) {
+		super(cause);
+	}
 }

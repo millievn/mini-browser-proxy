@@ -35,8 +35,8 @@ class RemapHostsTest extends MockServerTest {
                 .withPath("/remapHttpHost"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withBody("success"));
 
         proxy = new BrowserMobProxyServer();
         proxy.setTrustAllServers(true)
@@ -61,8 +61,8 @@ class RemapHostsTest extends MockServerTest {
                 .withPath("/remapHttpsHost"),
                 Times.exactly(1))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"));
+                        .withStatusCode(200)
+                        .withBody("success"));
 
         proxy = new BrowserMobProxyServer();
         proxy.setTrustAllServers(true)

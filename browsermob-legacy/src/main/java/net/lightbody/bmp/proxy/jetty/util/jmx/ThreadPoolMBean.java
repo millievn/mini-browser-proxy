@@ -21,39 +21,35 @@ import javax.management.MBeanException;
 
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.7 $
+
+/**
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.7 $
  */
-public class ThreadPoolMBean extends LifeCycleMBean
-{
-    /* ------------------------------------------------------------ */
-    public ThreadPoolMBean()
-        throws MBeanException
-    {
-        super();
-    }
-    
-    /* ------------------------------------------------------------ */
-    public ThreadPoolMBean(ThreadPool object)
-        throws MBeanException
-    {
-        super(object);
-    }
-    
-    
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("name");
-        defineAttribute("poolName");
-        defineAttribute("threads");
-        defineAttribute("idleThreads");
-        defineAttribute("minThreads");
-        defineAttribute("maxThreads");
-        defineAttribute("maxIdleTimeMs");
-        defineAttribute("threadsPriority");
-    }    
+public class ThreadPoolMBean extends LifeCycleMBean {
+	/* ------------------------------------------------------------ */
+	public ThreadPoolMBean()
+			throws MBeanException {
+		super();
+	}
+
+	/* ------------------------------------------------------------ */
+	public ThreadPoolMBean(ThreadPool object)
+			throws MBeanException {
+		super(object);
+	}
+
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("name");
+		defineAttribute("poolName");
+		defineAttribute("threads");
+		defineAttribute("idleThreads");
+		defineAttribute("minThreads");
+		defineAttribute("maxThreads");
+		defineAttribute("maxIdleTimeMs");
+		defineAttribute("threadsPriority");
+	}
 }

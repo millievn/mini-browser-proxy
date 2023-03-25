@@ -17,61 +17,61 @@ import java.security.cert.X509Certificate;
  * implementation of {@link CertificateAndKeySource}.
  */
 public class KeyStoreCertificateSource implements CertificateAndKeySource {
-    private final KeyStore keyStore;
-    private final String keyStorePassword;
-    private final String privateKeyAlias;
+	private final KeyStore keyStore;
+	private final String keyStorePassword;
+	private final String privateKeyAlias;
 
-    public KeyStoreCertificateSource(KeyStore keyStore, String privateKeyAlias, String keyStorePassword) {
-        if (keyStore == null) {
-            throw new IllegalArgumentException("KeyStore cannot be null");
-        }
+	public KeyStoreCertificateSource(KeyStore keyStore, String privateKeyAlias, String keyStorePassword) {
+		if (keyStore == null) {
+			throw new IllegalArgumentException("KeyStore cannot be null");
+		}
 
-        if (privateKeyAlias == null) {
-            throw new IllegalArgumentException("Private key alias cannot be null");
-        }
+		if (privateKeyAlias == null) {
+			throw new IllegalArgumentException("Private key alias cannot be null");
+		}
 
-        if (keyStorePassword == null) {
-            throw new IllegalArgumentException("KeyStore password cannot be null");
-        }
+		if (keyStorePassword == null) {
+			throw new IllegalArgumentException("KeyStore password cannot be null");
+		}
 
-        this.keyStore = keyStore;
-        this.keyStorePassword = keyStorePassword;
-        this.privateKeyAlias = privateKeyAlias;
-    }
+		this.keyStore = keyStore;
+		this.keyStorePassword = keyStorePassword;
+		this.privateKeyAlias = privateKeyAlias;
+	}
 
-    @Override
-    public CertificateAndKey load() {
-        try {
-            KeyStore.Entry entry;
-            try {
-                entry = keyStore.getEntry(privateKeyAlias, new KeyStore.PasswordProtection(keyStorePassword.toCharArray()));
-            } catch (UnrecoverableEntryException e) {
-                throw new CertificateSourceException("Unable to load private key with alias " + privateKeyAlias + " from KeyStore. Verify the KeyStore password is correct.", e);
-            }
+	@Override
+	public CertificateAndKey load() {
+		try {
+			KeyStore.Entry entry;
+			try {
+				entry = keyStore.getEntry(privateKeyAlias, new KeyStore.PasswordProtection(keyStorePassword.toCharArray()));
+			} catch (UnrecoverableEntryException e) {
+				throw new CertificateSourceException("Unable to load private key with alias " + privateKeyAlias + " from KeyStore. Verify the KeyStore password is correct.", e);
+			}
 
-            if (entry == null) {
-                throw new CertificateSourceException("Unable to find entry in keystore with alias: " + privateKeyAlias);
-            }
+			if (entry == null) {
+				throw new CertificateSourceException("Unable to find entry in keystore with alias: " + privateKeyAlias);
+			}
 
-            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-                throw new CertificateSourceException("Entry in KeyStore with alias " + privateKeyAlias + " did not contain a private key entry");
-            }
+			if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
+				throw new CertificateSourceException("Entry in KeyStore with alias " + privateKeyAlias + " did not contain a private key entry");
+			}
 
-            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) entry;
+			KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) entry;
 
-            PrivateKey privateKey = privateKeyEntry.getPrivateKey();
+			PrivateKey privateKey = privateKeyEntry.getPrivateKey();
 
-            if (!(privateKeyEntry.getCertificate() instanceof X509Certificate)) {
-                throw new CertificateSourceException("Certificate for private key in KeyStore was not an X509Certificate. Private key alias: " + privateKeyAlias
-                        + ". Certificate type: " + (privateKeyEntry.getCertificate() != null ? privateKeyEntry.getCertificate().getClass().getName() : null));
-            }
+			if (!(privateKeyEntry.getCertificate() instanceof X509Certificate)) {
+				throw new CertificateSourceException("Certificate for private key in KeyStore was not an X509Certificate. Private key alias: " + privateKeyAlias
+						+ ". Certificate type: " + (privateKeyEntry.getCertificate() != null ? privateKeyEntry.getCertificate().getClass().getName() : null));
+			}
 
-            X509Certificate x509Certificate = (X509Certificate) privateKeyEntry.getCertificate();
+			X509Certificate x509Certificate = (X509Certificate) privateKeyEntry.getCertificate();
 
-            return new CertificateAndKey(x509Certificate, privateKey);
-        } catch (KeyStoreException | NoSuchAlgorithmException e) {
-            throw new CertificateSourceException("Error accessing keyStore", e);
-        }
-    }
+			return new CertificateAndKey(x509Certificate, privateKey);
+		} catch (KeyStoreException | NoSuchAlgorithmException e) {
+			throw new CertificateSourceException("Error accessing keyStore", e);
+		}
+	}
 
 }

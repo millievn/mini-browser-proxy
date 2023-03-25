@@ -22,33 +22,30 @@ import javax.management.MBeanOperationInfo;
 
 
 /* ------------------------------------------------------------ */
-/** 
- *
- * @version $Revision: 1.4 $
+
+/**
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.4 $
  */
-public class LifeCycleMBean extends ModelMBeanImpl
-{
-    /* ------------------------------------------------------------ */
-    public LifeCycleMBean()
-        throws MBeanException
-    {}
-    
-    /* ------------------------------------------------------------ */
-    public LifeCycleMBean(LifeCycle object)
-        throws MBeanException
-    {
-        super(object);
-    }
-    
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
-        defineAttribute("started");
-        defineOperation("start",MBeanOperationInfo.ACTION);
-        defineOperation("stop",MBeanOperationInfo.ACTION);
-    }    
+public class LifeCycleMBean extends ModelMBeanImpl {
+	/* ------------------------------------------------------------ */
+	public LifeCycleMBean()
+			throws MBeanException {
+	}
+
+	/* ------------------------------------------------------------ */
+	public LifeCycleMBean(LifeCycle object)
+			throws MBeanException {
+		super(object);
+	}
+
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
+		defineAttribute("started");
+		defineOperation("start", MBeanOperationInfo.ACTION);
+		defineOperation("stop", MBeanOperationInfo.ACTION);
+	}
 }
 
 

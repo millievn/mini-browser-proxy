@@ -14,23 +14,25 @@
 // ========================================================================
 
 package net.lightbody.bmp.proxy.jetty.html;
+
 import java.io.IOException;
 import java.io.Writer;
 
 
 /* ------------------------------------------------------------ */
-/** HTML Comment.
- * @version $Id: Comment.java,v 1.2 2004/05/09 20:31:28 gregwilkins Exp $
+
+/**
+ * HTML Comment.
+ *
  * @author Greg Wilkins (gregw)
+ * @version $Id: Comment.java,v 1.2 2004/05/09 20:31:28 gregwilkins Exp $
  */
-public class Comment extends Composite
-{
-    /* ----------------------------------------------------------------- */
-    public void write(Writer out)
-         throws IOException
-    {
-        out.write("<!--\n");
-        super.write(out);
-        out.write("\n-->");
-    }
+public class Comment extends Composite {
+	/* ----------------------------------------------------------------- */
+	public void write(Writer out)
+			throws IOException {
+		out.write("<!--\n");
+		super.write(out);
+		out.write("\n-->");
+	}
 };

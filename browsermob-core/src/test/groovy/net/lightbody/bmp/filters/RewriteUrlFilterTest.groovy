@@ -18,9 +18,7 @@ import org.junit.Test
 import org.mockserver.matchers.Times
 
 import static org.junit.Assert.assertEquals
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
+import static org.mockito.Mockito.*
 import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.response
 
@@ -50,7 +48,7 @@ class RewriteUrlFilterTest extends MockServerTest {
         when(mockIsHttpsAttribute.get()).thenReturn(Boolean.FALSE)
 
         ChannelHandlerContext mockCtx = mock(ChannelHandlerContext)
-        when(mockCtx.attr(AttributeKey.<Boolean>valueOf(HttpsAwareFiltersAdapter.IS_HTTPS_ATTRIBUTE_NAME)))
+        when(mockCtx.attr(AttributeKey.<Boolean> valueOf(HttpsAwareFiltersAdapter.IS_HTTPS_ATTRIBUTE_NAME)))
                 .thenReturn(mockIsHttpsAttribute)
 
         RewriteUrlFilter filter = new RewriteUrlFilter(request, mockCtx, rewriteRules);
@@ -78,7 +76,7 @@ class RewriteUrlFilterTest extends MockServerTest {
         when(mockIsHttpsAttribute.get()).thenReturn(Boolean.FALSE)
 
         ChannelHandlerContext mockCtx = mock(ChannelHandlerContext)
-        when(mockCtx.attr(AttributeKey.<Boolean>valueOf(HttpsAwareFiltersAdapter.IS_HTTPS_ATTRIBUTE_NAME)))
+        when(mockCtx.attr(AttributeKey.<Boolean> valueOf(HttpsAwareFiltersAdapter.IS_HTTPS_ATTRIBUTE_NAME)))
                 .thenReturn(mockIsHttpsAttribute)
 
         RewriteUrlFilter filter = new RewriteUrlFilter(request, mockCtx, rewriteRules);
@@ -95,8 +93,8 @@ class RewriteUrlFilterTest extends MockServerTest {
                 .withHeader("Host", "localhost:${mockServerPort}"),
                 Times.exactly(2))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer()
         proxy.rewriteUrl('http://www\\.someotherhost\\.com:(\\d+)/(\\w+)', 'http://localhost:$1/$2')
@@ -126,8 +124,8 @@ class RewriteUrlFilterTest extends MockServerTest {
                 .withPath("/rewrittenresource"),
                 Times.exactly(2))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer()
         proxy.rewriteUrl('http://badhost:(\\d+)/badresource', 'http://localhost:$1/rewrittenresource')
@@ -151,8 +149,8 @@ class RewriteUrlFilterTest extends MockServerTest {
                 .withPath("/rewrittenresource"),
                 Times.exactly(2))
                 .respond(response()
-                .withStatusCode(200)
-                .withBody("success"))
+                        .withStatusCode(200)
+                        .withBody("success"))
 
         proxy = new BrowserMobProxyServer()
         proxy.setTrustAllServers(true)

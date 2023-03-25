@@ -10,13 +10,8 @@ import java.nio.file.StandardCopyOption
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 
-import static org.hamcrest.Matchers.both
-import static org.hamcrest.Matchers.emptyArray
-import static org.hamcrest.Matchers.not
-import static org.hamcrest.Matchers.notNullValue
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertThat
+import static org.hamcrest.Matchers.*
+import static org.junit.Assert.*
 
 class TrustSourceTest {
     @Rule

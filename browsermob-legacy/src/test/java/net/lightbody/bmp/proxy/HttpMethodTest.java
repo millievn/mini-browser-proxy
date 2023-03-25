@@ -70,5 +70,5 @@ public class HttpMethodTest extends LocalServerTest {
 		assertEquals("HTTP TRACE request failed", 200, response.getStatusLine().getStatusCode());
 		assertTrue("Server reported HTTP method was not TRACE. Body was: " + body, body.contains("Method: TRACE"));
 	}
-	
+
 }

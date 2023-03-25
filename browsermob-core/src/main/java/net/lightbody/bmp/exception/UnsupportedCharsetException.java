@@ -6,18 +6,18 @@ package net.lightbody.bmp.exception;
  * than fallback to some suitable default behavior, such as not parsing the text contents of a message.
  */
 public class UnsupportedCharsetException extends Exception {
-    public UnsupportedCharsetException(java.nio.charset.UnsupportedCharsetException e) {
-        super(e);
+	public UnsupportedCharsetException(java.nio.charset.UnsupportedCharsetException e) {
+		super(e);
 
-        if (e == null) {
-            throw new IllegalArgumentException("net.lightbody.bmp.exception.UnsupportedCharsetException must be initialized with a non-null instance of java.nio.charset.UnsupportedCharsetException");
-        }
-    }
+		if (e == null) {
+			throw new IllegalArgumentException("net.lightbody.bmp.exception.UnsupportedCharsetException must be initialized with a non-null instance of java.nio.charset.UnsupportedCharsetException");
+		}
+	}
 
-    /**
-     * @return the underlying {@link java.nio.charset.UnsupportedCharsetException} that this exception wraps.
-     */
-    public java.nio.charset.UnsupportedCharsetException getUnsupportedCharsetExceptionCause() {
-        return (java.nio.charset.UnsupportedCharsetException) this.getCause();
-    }
+	/**
+	 * @return the underlying {@link java.nio.charset.UnsupportedCharsetException} that this exception wraps.
+	 */
+	public java.nio.charset.UnsupportedCharsetException getUnsupportedCharsetExceptionCause() {
+		return (java.nio.charset.UnsupportedCharsetException) this.getCause();
+	}
 }

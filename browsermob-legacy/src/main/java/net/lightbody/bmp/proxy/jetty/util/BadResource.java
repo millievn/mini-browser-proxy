@@ -19,95 +19,84 @@ import java.net.URL;
 
 
 /* ------------------------------------------------------------ */
-/** Bad Resource.
- *
+
+/**
+ * Bad Resource.
+ * <p>
  * A Resource that is returned for a bade URL.  Acts as a resource
  * that does not exist and throws appropriate exceptions.
  *
- * @version $Revision: 1.5 $
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.5 $
  */
-class BadResource extends URLResource
-{
-    /* ------------------------------------------------------------ */
-    private String _message=null;
-        
-    /* -------------------------------------------------------- */
-    BadResource(URL url,  String message)
-    {
-        super(url,null);
-        _message=message;
-    }
-    
+class BadResource extends URLResource {
+	/* ------------------------------------------------------------ */
+	private String _message = null;
 
-    /* -------------------------------------------------------- */
-    public boolean exists()
-    {
-        return false;
-    }
-        
-    /* -------------------------------------------------------- */
-    public long lastModified()
-    {
-        return -1;
-    }
+	/* -------------------------------------------------------- */
+	BadResource(URL url, String message) {
+		super(url, null);
+		_message = message;
+	}
 
-    /* -------------------------------------------------------- */
-    public boolean isDirectory()
-    {
-        return false;
-    }
 
-    /* --------------------------------------------------------- */
-    public long length()
-    {
-        return -1;
-    }
-        
-        
-    /* ------------------------------------------------------------ */
-    public File getFile()
-    {
-        return null;
-    }
-        
-    /* --------------------------------------------------------- */
-    public InputStream getInputStream() throws IOException
-    {
-        throw new FileNotFoundException(_message);
-    }
-        
-    /* --------------------------------------------------------- */
-    public OutputStream getOutputStream()
-        throws java.io.IOException, SecurityException
-    {
-        throw new FileNotFoundException(_message);
-    }
-        
-    /* --------------------------------------------------------- */
-    public boolean delete()
-        throws SecurityException
-    {
-        throw new SecurityException(_message);
-    }
+	/* -------------------------------------------------------- */
+	public boolean exists() {
+		return false;
+	}
 
-    /* --------------------------------------------------------- */
-    public boolean renameTo( Resource dest)
-        throws SecurityException
-    {
-        throw new SecurityException(_message);
-    }
+	/* -------------------------------------------------------- */
+	public long lastModified() {
+		return -1;
+	}
 
-    /* --------------------------------------------------------- */
-    public String[] list()
-    {
-        return null;
-    }
+	/* -------------------------------------------------------- */
+	public boolean isDirectory() {
+		return false;
+	}
 
-    /* ------------------------------------------------------------ */
-    public String toString()
-    {
-        return super.toString()+"; BadResource="+_message;
-    }
-    
+	/* --------------------------------------------------------- */
+	public long length() {
+		return -1;
+	}
+
+
+	/* ------------------------------------------------------------ */
+	public File getFile() {
+		return null;
+	}
+
+	/* --------------------------------------------------------- */
+	public InputStream getInputStream() throws IOException {
+		throw new FileNotFoundException(_message);
+	}
+
+	/* --------------------------------------------------------- */
+	public OutputStream getOutputStream()
+			throws java.io.IOException, SecurityException {
+		throw new FileNotFoundException(_message);
+	}
+
+	/* --------------------------------------------------------- */
+	public boolean delete()
+			throws SecurityException {
+		throw new SecurityException(_message);
+	}
+
+	/* --------------------------------------------------------- */
+	public boolean renameTo(Resource dest)
+			throws SecurityException {
+		throw new SecurityException(_message);
+	}
+
+	/* --------------------------------------------------------- */
+	public String[] list() {
+		return null;
+	}
+
+	/* ------------------------------------------------------------ */
+	public String toString() {
+		return super.toString() + "; BadResource=" + _message;
+	}
+
 }

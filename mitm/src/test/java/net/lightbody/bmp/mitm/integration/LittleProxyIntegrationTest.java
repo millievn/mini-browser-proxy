@@ -35,96 +35,96 @@ import static org.junit.Assert.assertTrue;
  * Tests out-of-the-box integration with LittleProxy.
  */
 public class LittleProxyIntegrationTest {
-    @Test
-    public void testLittleProxyMitm() throws IOException, InterruptedException {
-        final AtomicBoolean interceptedGetRequest = new AtomicBoolean();
-        final AtomicBoolean interceptedGetResponse = new AtomicBoolean();
+	@Test
+	public void testLittleProxyMitm() throws IOException, InterruptedException {
+		final AtomicBoolean interceptedGetRequest = new AtomicBoolean();
+		final AtomicBoolean interceptedGetResponse = new AtomicBoolean();
 
-        HttpFiltersSource filtersSource = new HttpFiltersSourceAdapter() {
-            @Override
-            public HttpFilters filterRequest(HttpRequest originalRequest) {
-                return new HttpFiltersAdapter(originalRequest) {
-                    @Override
-                    public HttpResponse proxyToServerRequest(HttpObject httpObject) {
-                        if (httpObject instanceof HttpRequest) {
-                            HttpRequest httpRequest = (HttpRequest) httpObject;
-                            if (httpRequest.getMethod().equals(HttpMethod.GET)) {
-                                interceptedGetRequest.set(true);
-                            }
-                        }
+		HttpFiltersSource filtersSource = new HttpFiltersSourceAdapter() {
+			@Override
+			public HttpFilters filterRequest(HttpRequest originalRequest) {
+				return new HttpFiltersAdapter(originalRequest) {
+					@Override
+					public HttpResponse proxyToServerRequest(HttpObject httpObject) {
+						if (httpObject instanceof HttpRequest) {
+							HttpRequest httpRequest = (HttpRequest) httpObject;
+							if (httpRequest.getMethod().equals(HttpMethod.GET)) {
+								interceptedGetRequest.set(true);
+							}
+						}
 
-                        return super.proxyToServerRequest(httpObject);
-                    }
+						return super.proxyToServerRequest(httpObject);
+					}
 
-                    @Override
-                    public HttpObject serverToProxyResponse(HttpObject httpObject) {
-                        if (httpObject instanceof HttpResponse) {
-                            HttpResponse httpResponse = (HttpResponse) httpObject;
-                            if (httpResponse.getStatus().code() == 200) {
-                                interceptedGetResponse.set(true);
-                            }
-                        }
-                        return super.serverToProxyResponse(httpObject);
-                    }
-                };
-            }
-        };
+					@Override
+					public HttpObject serverToProxyResponse(HttpObject httpObject) {
+						if (httpObject instanceof HttpResponse) {
+							HttpResponse httpResponse = (HttpResponse) httpObject;
+							if (httpResponse.getStatus().code() == 200) {
+								interceptedGetResponse.set(true);
+							}
+						}
+						return super.serverToProxyResponse(httpObject);
+					}
+				};
+			}
+		};
 
-        ImpersonatingMitmManager mitmManager = ImpersonatingMitmManager.builder().build();
+		ImpersonatingMitmManager mitmManager = ImpersonatingMitmManager.builder().build();
 
-        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
-                .withPort(0)
-                .withManInTheMiddle(mitmManager)
-                .withFiltersSource(filtersSource)
-                .start();
+		HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+				.withPort(0)
+				.withManInTheMiddle(mitmManager)
+				.withFiltersSource(filtersSource)
+				.start();
 
-        try (CloseableHttpClient httpClient = getNewHttpClient(proxyServer.getListenAddress().getPort())) {
-            try (CloseableHttpResponse response = httpClient.execute(new HttpGet("https://www.google.com"))) {
-                assertEquals("Expected to receive an HTTP 200 from http://www.google.com", 200, response.getStatusLine().getStatusCode());
+		try (CloseableHttpClient httpClient = getNewHttpClient(proxyServer.getListenAddress().getPort())) {
+			try (CloseableHttpResponse response = httpClient.execute(new HttpGet("https://www.google.com"))) {
+				assertEquals("Expected to receive an HTTP 200 from http://www.google.com", 200, response.getStatusLine().getStatusCode());
 
-                EntityUtils.consume(response.getEntity());
-            }
-        }
+				EntityUtils.consume(response.getEntity());
+			}
+		}
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 
-        assertTrue("Expected HttpFilters to successfully intercept the HTTP GET request", interceptedGetRequest.get());
-        assertTrue("Expected HttpFilters to successfully intercept the server's response to the HTTP GET", interceptedGetResponse.get());
+		assertTrue("Expected HttpFilters to successfully intercept the HTTP GET request", interceptedGetRequest.get());
+		assertTrue("Expected HttpFilters to successfully intercept the server's response to the HTTP GET", interceptedGetResponse.get());
 
-        proxyServer.abort();
-    }
+		proxyServer.abort();
+	}
 
-    /**
-     * Creates an HTTP client that trusts all upstream servers and uses a localhost proxy on the specified port.
-     */
-    private static CloseableHttpClient getNewHttpClient(int proxyPort) {
-        try {
-            // Trust all certs -- under no circumstances should this ever be used outside of testing
-            SSLContext sslcontext = SSLContexts.custom()
-                    .useTLS()
-                    .loadTrustMaterial(null, new TrustStrategy() {
-                        @Override
-                        public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                            return true;
-                        }
-                    })
-                    .build();
+	/**
+	 * Creates an HTTP client that trusts all upstream servers and uses a localhost proxy on the specified port.
+	 */
+	private static CloseableHttpClient getNewHttpClient(int proxyPort) {
+		try {
+			// Trust all certs -- under no circumstances should this ever be used outside of testing
+			SSLContext sslcontext = SSLContexts.custom()
+					.useTLS()
+					.loadTrustMaterial(null, new TrustStrategy() {
+						@Override
+						public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+							return true;
+						}
+					})
+					.build();
 
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                    sslcontext,
-                    SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+					sslcontext,
+					SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
-            CloseableHttpClient httpclient = HttpClients.custom()
-                    .setSSLSocketFactory(sslsf)
-                    .setProxy(new HttpHost("127.0.0.1", proxyPort))
-                    // disable decompressing content, since some tests want uncompressed content for testing purposes
-                    .disableContentCompression()
-                    .disableAutomaticRetries()
-                    .build();
+			CloseableHttpClient httpclient = HttpClients.custom()
+					.setSSLSocketFactory(sslsf)
+					.setProxy(new HttpHost("127.0.0.1", proxyPort))
+					// disable decompressing content, since some tests want uncompressed content for testing purposes
+					.disableContentCompression()
+					.disableAutomaticRetries()
+					.build();
 
-            return httpclient;
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to create new HTTP client", e);
-        }
-    }
+			return httpclient;
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to create new HTTP client", e);
+		}
+	}
 }

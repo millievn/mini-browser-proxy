@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SetCookieServlet extends HttpServlet {
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setStatus(200);
-        Cookie cookie = new Cookie("foo", "bar");
-        cookie.setPath("/");
-        resp.addCookie(cookie);
-    }
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setStatus(200);
+		Cookie cookie = new Cookie("foo", "bar");
+		cookie.setPath("/");
+		resp.addCookie(cookie);
+	}
 }

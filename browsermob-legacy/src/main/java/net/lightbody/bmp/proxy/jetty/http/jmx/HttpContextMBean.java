@@ -31,183 +31,178 @@ import java.util.HashMap;
 
 
 /* ------------------------------------------------------------ */
+
 /**
- *
- * @version $Revision: 1.17 $
  * @author Greg Wilkins (gregw)
+ * @version $Revision: 1.17 $
  */
-public class HttpContextMBean extends LifeCycleMBean
-{
-    private static Log log = LogFactory.getLog(HttpContextMBean.class);
+public class HttpContextMBean extends LifeCycleMBean {
+	private static Log log = LogFactory.getLog(HttpContextMBean.class);
 
-    private HttpContext _httpContext;
-    private HashMap _rlMap=new HashMap(3);
-    private HashMap _handlerMap = new HashMap();
+	private HttpContext _httpContext;
+	private HashMap _rlMap = new HashMap(3);
+	private HashMap _handlerMap = new HashMap();
 
-    /* ------------------------------------------------------------ */
-    /** Constructor.
-     * @exception MBeanException
-     */
-    public HttpContextMBean()
-        throws MBeanException
-    {}
+	/* ------------------------------------------------------------ */
 
-    /* ------------------------------------------------------------ */
-    protected void defineManagedResource()
-    {
-        super.defineManagedResource();
+	/**
+	 * Constructor.
+	 *
+	 * @throws MBeanException
+	 */
+	public HttpContextMBean()
+			throws MBeanException {
+	}
 
-        defineAttribute("virtualHosts");
-        defineAttribute("hosts");
-        defineAttribute("contextPath");
+	/* ------------------------------------------------------------ */
+	protected void defineManagedResource() {
+		super.defineManagedResource();
 
-        defineAttribute("handlers", ModelMBeanImpl.READ_ONLY, ModelMBeanImpl.ON_MBEAN);
-        defineAttribute("requestLog", ModelMBeanImpl.READ_ONLY, ModelMBeanImpl.ON_MBEAN);
-        
-        defineAttribute("classPath");
+		defineAttribute("virtualHosts");
+		defineAttribute("hosts");
+		defineAttribute("contextPath");
 
-        defineAttribute("realm");
-        defineAttribute("realmName");
+		defineAttribute("handlers", ModelMBeanImpl.READ_ONLY, ModelMBeanImpl.ON_MBEAN);
+		defineAttribute("requestLog", ModelMBeanImpl.READ_ONLY, ModelMBeanImpl.ON_MBEAN);
 
-        defineAttribute("redirectNullPath");
-        defineAttribute("resourceBase");
-        defineAttribute("maxCachedFileSize");
-        defineAttribute("maxCacheSize");
-        defineOperation("flushCache",
-                        ModelMBeanImpl.IMPACT_ACTION);
-        defineOperation("getResource",
-                        new String[] {ModelMBeanImpl.STRING},
-                        ModelMBeanImpl.IMPACT_ACTION);
+		defineAttribute("classPath");
 
-        defineAttribute("welcomeFiles");
-        defineOperation("addWelcomeFile",
-                        new String[] {ModelMBeanImpl.STRING},
-                        ModelMBeanImpl.IMPACT_INFO);
-        defineOperation("removeWelcomeFile",
-                        new String[] {ModelMBeanImpl.STRING},
-                        ModelMBeanImpl.IMPACT_INFO);
+		defineAttribute("realm");
+		defineAttribute("realmName");
 
-        defineAttribute("mimeMap");
-        defineOperation("setMimeMapping",new String[] {ModelMBeanImpl.STRING, ModelMBeanImpl.STRING}, ModelMBeanImpl.IMPACT_ACTION);
+		defineAttribute("redirectNullPath");
+		defineAttribute("resourceBase");
+		defineAttribute("maxCachedFileSize");
+		defineAttribute("maxCacheSize");
+		defineOperation("flushCache",
+				ModelMBeanImpl.IMPACT_ACTION);
+		defineOperation("getResource",
+				new String[]{ModelMBeanImpl.STRING},
+				ModelMBeanImpl.IMPACT_ACTION);
 
-        
-        defineAttribute("statsOn");
-        defineAttribute("statsOnMs");
-        defineOperation("statsReset", ModelMBeanImpl.IMPACT_ACTION);
-        defineAttribute("requests");
-        defineAttribute("requestsActive");
-        defineAttribute("requestsActiveMax");
-        defineAttribute("responses1xx");
-        defineAttribute("responses2xx");
-        defineAttribute("responses3xx");
-        defineAttribute("responses4xx");
-        defineAttribute("responses5xx");
+		defineAttribute("welcomeFiles");
+		defineOperation("addWelcomeFile",
+				new String[]{ModelMBeanImpl.STRING},
+				ModelMBeanImpl.IMPACT_INFO);
+		defineOperation("removeWelcomeFile",
+				new String[]{ModelMBeanImpl.STRING},
+				ModelMBeanImpl.IMPACT_INFO);
 
-        defineOperation("stop",new String[] {"java.lang.Boolean.TYPE"}, ModelMBeanImpl.IMPACT_ACTION);
-
-        defineOperation("destroy",
-                        ModelMBeanImpl.IMPACT_ACTION);
-
-        defineOperation("setInitParameter",
-                        new String[] {ModelMBeanImpl.STRING, ModelMBeanImpl.STRING},
-                        ModelMBeanImpl.IMPACT_ACTION);
-        defineOperation("getInitParameter",
-                        new String[] {ModelMBeanImpl.STRING},
-                        ModelMBeanImpl.IMPACT_INFO);
-        defineOperation("getInitParameterNames",
-                        ModelMBeanImpl.NO_PARAMS,
-                        ModelMBeanImpl.IMPACT_INFO);
-
-        defineOperation("setAttribute",new String[] {ModelMBeanImpl.STRING, ModelMBeanImpl.OBJECT}, ModelMBeanImpl.IMPACT_ACTION);
-        defineOperation("getAttribute",new String[] {ModelMBeanImpl.STRING}, ModelMBeanImpl.IMPACT_INFO);
-        defineOperation("getAttributeNames", ModelMBeanImpl.NO_PARAMS, ModelMBeanImpl.IMPACT_INFO);
-        defineOperation("removeAttribute",new String[] {ModelMBeanImpl.STRING}, ModelMBeanImpl.IMPACT_ACTION);
-
-        defineOperation("addHandler",new String[] {"HttpHandler"}, ModelMBeanImpl.IMPACT_ACTION);
-        defineOperation("addHandler",new String[] {ModelMBeanImpl.INT,"HttpHandler"}, ModelMBeanImpl.IMPACT_ACTION);
-        defineOperation("removeHandler",new String[] {ModelMBeanImpl.INT}, ModelMBeanImpl.IMPACT_ACTION);
+		defineAttribute("mimeMap");
+		defineOperation("setMimeMapping", new String[]{ModelMBeanImpl.STRING, ModelMBeanImpl.STRING}, ModelMBeanImpl.IMPACT_ACTION);
 
 
-        _httpContext=(HttpContext)getManagedResource();
-        
-        _httpContext.addEventListener(new LifeCycleListener()
-                {
+		defineAttribute("statsOn");
+		defineAttribute("statsOnMs");
+		defineOperation("statsReset", ModelMBeanImpl.IMPACT_ACTION);
+		defineAttribute("requests");
+		defineAttribute("requestsActive");
+		defineAttribute("requestsActiveMax");
+		defineAttribute("responses1xx");
+		defineAttribute("responses2xx");
+		defineAttribute("responses3xx");
+		defineAttribute("responses4xx");
+		defineAttribute("responses5xx");
 
-                    public void lifeCycleStarting (LifeCycleEvent event)
-                    {}
+		defineOperation("stop", new String[]{"java.lang.Boolean.TYPE"}, ModelMBeanImpl.IMPACT_ACTION);
 
-                    public void lifeCycleStarted (LifeCycleEvent event)
-                    {
-                        getHandlers();                     
-                    }
+		defineOperation("destroy",
+				ModelMBeanImpl.IMPACT_ACTION);
 
-                    public void lifeCycleFailure (LifeCycleEvent event)
-                    {}
+		defineOperation("setInitParameter",
+				new String[]{ModelMBeanImpl.STRING, ModelMBeanImpl.STRING},
+				ModelMBeanImpl.IMPACT_ACTION);
+		defineOperation("getInitParameter",
+				new String[]{ModelMBeanImpl.STRING},
+				ModelMBeanImpl.IMPACT_INFO);
+		defineOperation("getInitParameterNames",
+				ModelMBeanImpl.NO_PARAMS,
+				ModelMBeanImpl.IMPACT_INFO);
 
-                    public void lifeCycleStopping (LifeCycleEvent event)
-                    {}
+		defineOperation("setAttribute", new String[]{ModelMBeanImpl.STRING, ModelMBeanImpl.OBJECT}, ModelMBeanImpl.IMPACT_ACTION);
+		defineOperation("getAttribute", new String[]{ModelMBeanImpl.STRING}, ModelMBeanImpl.IMPACT_INFO);
+		defineOperation("getAttributeNames", ModelMBeanImpl.NO_PARAMS, ModelMBeanImpl.IMPACT_INFO);
+		defineOperation("removeAttribute", new String[]{ModelMBeanImpl.STRING}, ModelMBeanImpl.IMPACT_ACTION);
 
-                    public void lifeCycleStopped (LifeCycleEvent event)
-                    {
-                        destroyHandlers();
-                    }
-            
-                });
-    }
+		defineOperation("addHandler", new String[]{"HttpHandler"}, ModelMBeanImpl.IMPACT_ACTION);
+		defineOperation("addHandler", new String[]{ModelMBeanImpl.INT, "HttpHandler"}, ModelMBeanImpl.IMPACT_ACTION);
+		defineOperation("removeHandler", new String[]{ModelMBeanImpl.INT}, ModelMBeanImpl.IMPACT_ACTION);
 
 
-    /* ------------------------------------------------------------ */
-    protected ObjectName newObjectName(MBeanServer server)
-    {
-        ObjectName oName=super.newObjectName(server);
-        String context=_httpContext.getContextPath();
-        if (context.length()==0)
-            context="/";
-        try{oName=new ObjectName(oName+",context="+context);}
-        catch(Exception e){log.warn(LogSupport.EXCEPTION,e);}
-        return oName;
-    }
+		_httpContext = (HttpContext) getManagedResource();
 
-    /* ------------------------------------------------------------ */
-    public void postRegister(Boolean ok)
-    {
-        super.postRegister(ok);
-        if (ok.booleanValue())
-            getHandlers();
-    }
+		_httpContext.addEventListener(new LifeCycleListener() {
 
-    /* ------------------------------------------------------------ */
-    public void postDeregister()
-    {
-        _httpContext=null;
-        destroyComponentMBeans(_handlerMap);
-        super.postDeregister();
-    }
+			public void lifeCycleStarting(LifeCycleEvent event) {
+			}
 
-    /* ------------------------------------------------------------ */
-    public ObjectName[] getHandlers()
-    {
-        return getComponentMBeans(_httpContext.getHandlers(),_handlerMap);
-    }
-    
-  
-    public void destroyHandlers()
-    {
-        destroyComponentMBeans(_handlerMap);
-    }
+			public void lifeCycleStarted(LifeCycleEvent event) {
+				getHandlers();
+			}
 
-    /* ------------------------------------------------------------ */
-    public ObjectName getRequestLog()
-    {
-        Object o = _httpContext.getRequestLog();
-        if (o==null)
-            return null;
-        
-        ObjectName[] on=getComponentMBeans(new Object[]{o},_rlMap);
-        if (on.length>0)
-            return on[0];
-        return null;
-    }
+			public void lifeCycleFailure(LifeCycleEvent event) {
+			}
+
+			public void lifeCycleStopping(LifeCycleEvent event) {
+			}
+
+			public void lifeCycleStopped(LifeCycleEvent event) {
+				destroyHandlers();
+			}
+
+		});
+	}
+
+
+	/* ------------------------------------------------------------ */
+	protected ObjectName newObjectName(MBeanServer server) {
+		ObjectName oName = super.newObjectName(server);
+		String context = _httpContext.getContextPath();
+		if (context.length() == 0)
+			context = "/";
+		try {
+			oName = new ObjectName(oName + ",context=" + context);
+		} catch (Exception e) {
+			log.warn(LogSupport.EXCEPTION, e);
+		}
+		return oName;
+	}
+
+	/* ------------------------------------------------------------ */
+	public void postRegister(Boolean ok) {
+		super.postRegister(ok);
+		if (ok.booleanValue())
+			getHandlers();
+	}
+
+	/* ------------------------------------------------------------ */
+	public void postDeregister() {
+		_httpContext = null;
+		destroyComponentMBeans(_handlerMap);
+		super.postDeregister();
+	}
+
+	/* ------------------------------------------------------------ */
+	public ObjectName[] getHandlers() {
+		return getComponentMBeans(_httpContext.getHandlers(), _handlerMap);
+	}
+
+
+	public void destroyHandlers() {
+		destroyComponentMBeans(_handlerMap);
+	}
+
+	/* ------------------------------------------------------------ */
+	public ObjectName getRequestLog() {
+		Object o = _httpContext.getRequestLog();
+		if (o == null)
+			return null;
+
+		ObjectName[] on = getComponentMBeans(new Object[]{o}, _rlMap);
+		if (on.length > 0)
+			return on[0];
+		return null;
+	}
 
 }
 

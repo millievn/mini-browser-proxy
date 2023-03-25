@@ -9,11 +9,11 @@ import io.netty.handler.codec.http.HttpRequest;
  * {@link HttpRequest} object.
  */
 public interface ModifiedRequestAwareFilter {
-    /**
-     * Notifies implementing classes of the modified HttpRequest that will be sent to the server, reflecting all
-     * modifications from filters.
-     *
-     * @param modifiedHttpRequest the modified HttpRequest sent to the server
-     */
-    void setModifiedHttpRequest(HttpRequest modifiedHttpRequest);
+	/**
+	 * Notifies implementing classes of the modified HttpRequest that will be sent to the server, reflecting all
+	 * modifications from filters.
+	 *
+	 * @param modifiedHttpRequest the modified HttpRequest sent to the server
+	 */
+	void setModifiedHttpRequest(HttpRequest modifiedHttpRequest);
 }
