@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -25,6 +26,7 @@ import net.lightbody.bmp.proxy.dns.DelegatingHostResolver;
 import net.lightbody.bmp.util.BrowserMobHttpUtil;
 import net.lightbody.bmp.util.BrowserMobProxyUtil;
 import org.littleshoot.proxy.*;
+import org.littleshoot.proxy.impl.ClientDetails;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ProxyUtils;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
@@ -47,6 +49,11 @@ import java.util.regex.Pattern;
  */
 public class BrowserMobProxyServer implements BrowserMobProxy {
 	private static final Logger log = LoggerFactory.getLogger(BrowserMobProxyServer.class);
+
+	private static final Object LOCK = new Object();
+
+	public static final String DEFAULT_PAGE_REF = "Default";
+	public static final String DEFAULT_PAGE_TITLE = "Default";
 
 	private static final HarNameVersion HAR_CREATOR_VERSION = new HarNameVersion("BrowserMob Proxy", BrowserMobProxyUtil.getVersionString());
 
@@ -301,7 +308,7 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 
 			bootstrap.withChainProxyManager(new ChainedProxyManager() {
 				@Override
-				public void lookupChainedProxies(HttpRequest httpRequest, Queue<ChainedProxy> chainedProxies) {
+				public void lookupChainedProxies(HttpRequest httpRequest, Queue<ChainedProxy> chainedProxies, ClientDetails clientDetails) {
 					final InetSocketAddress upstreamProxy = upstreamProxyAddress;
 					if (upstreamProxy != null) {
 						chainedProxies.add(new ChainedProxyAdapter() {
@@ -314,8 +321,8 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 							public void filterRequest(HttpObject httpObject) {
 								String chainedProxyAuth = chainedProxyCredentials;
 								if (chainedProxyAuth != null) {
-									if (httpObject instanceof HttpRequest) {
-										HttpHeaders.addHeader((HttpRequest) httpObject, HttpHeaders.Names.PROXY_AUTHORIZATION, "Basic " + chainedProxyAuth);
+									if(ProxyUtils.isCONNECT(httpObject) || !((HttpRequest) httpObject).uri().startsWith("/")) {
+										HttpHeaders.addHeader((HttpRequest) httpObject, HttpHeaderNames.PROXY_AUTHORIZATION, "Basic " + chainedProxyAuth);
 									}
 								}
 							}
@@ -330,6 +337,8 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 		}
 
 		proxyServer = bootstrap.start();
+
+		addHarCaptureFilter();
 	}
 
 	@Override
@@ -423,6 +432,10 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 
 	@Override
 	public Har newHar(String initialPageRef, String initialPageTitle) {
+		return newHar(initialPageRef, initialPageTitle, true);
+	}
+
+	private Har newHar(String initialPageRef, String initialPageTitle, boolean createPage) {
 		Har oldHar = getHar();
 
 		addHarCaptureFilter();
@@ -431,7 +444,9 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 
 		this.har = new Har(new HarLog(HAR_CREATOR_VERSION));
 
-		newPage(initialPageRef, initialPageTitle);
+		if (createPage) {
+			newPage(initialPageRef, initialPageTitle);
+		}
 
 		return oldHar;
 	}
@@ -500,9 +515,7 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 
 	@Override
 	public Har newPage(String pageRef, String pageTitle) {
-		if (har == null) {
-			throw new IllegalStateException("No HAR exists for this proxy. Use newHar() to create a new HAR before calling newPage().");
-		}
+		har = getOrCreateHar(pageRef, pageTitle, false);
 
 		Har endOfPageHar = null;
 
@@ -573,9 +586,7 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 	}
 
 	public void endPage() {
-		if (har == null) {
-			throw new IllegalStateException("No HAR exists for this proxy. Use newHar() to create a new HAR.");
-		}
+		if (har == null) return;
 
 		HarPage previousPage = this.currentHarPage;
 		this.currentHarPage = null;
@@ -1111,9 +1122,9 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 			addHttpFilterFactory(new HttpFiltersSourceAdapter() {
 				@Override
 				public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
-					Har har = getHar();
+					Har har = getOrCreateHar();
 					if (har != null && !ProxyUtils.isCONNECT(originalRequest)) {
-						return new HarCaptureFilter(originalRequest, ctx, har, getCurrentHarPage() == null ? null : getCurrentHarPage().getId(), getHarCaptureTypes());
+						return new HarCaptureFilter(originalRequest, ctx, har, getCurrentPageRef(), getHarCaptureTypes());
 					} else {
 						return null;
 					}
@@ -1124,9 +1135,9 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 			addHttpFilterFactory(new HttpFiltersSourceAdapter() {
 				@Override
 				public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
-					Har har = getHar();
+					Har har = getOrCreateHar();
 					if (har != null && ProxyUtils.isCONNECT(originalRequest)) {
-						return new HttpConnectHarCaptureFilter(originalRequest, ctx, har, getCurrentHarPage() == null ? null : getCurrentHarPage().getId());
+						return new HttpConnectHarCaptureFilter(originalRequest, ctx, har, getCurrentPageRef());
 					} else {
 						return null;
 					}
@@ -1134,4 +1145,45 @@ public class BrowserMobProxyServer implements BrowserMobProxy {
 			});
 		}
 	}
+	private Har getOrCreateHar(String initialPageRef, String initialPageTitle, boolean createPage) {
+		if (har == null) {
+			synchronized (LOCK) {
+				if (har == null) {
+					newHar(initialPageRef, initialPageTitle, createPage);
+				}
+			}
+		}
+		return har;
+	}
+
+	private Har getOrCreateHar() {
+		return getOrCreateHar(DEFAULT_PAGE_REF, DEFAULT_PAGE_TITLE, true);
+	}
+
+	private String getCurrentPageRef() {
+		HarPage harPage = getCurrentHarPage();
+		harPage = harPage == null ? getOrCreateDefaultPage() : harPage;
+
+		return harPage.getId();
+	}
+
+	private HarPage getOrCreateDefaultPage() {
+		return getDefaultPage().orElseGet(this::addDefaultPage);
+	}
+
+	private HarPage addDefaultPage() {
+		HarPage newPage = new HarPage();
+		newPage.setTitle(DEFAULT_PAGE_REF);
+		newPage.setId(DEFAULT_PAGE_REF);
+		newPage.setStartedDateTime(new Date());
+		getHar().getLog().getPages().add(newPage);
+		return newPage;
+	}
+
+	private Optional<HarPage> getDefaultPage() {
+		return getHar().getLog().getPages().stream()
+				.filter(p -> p.getTitle().equals(DEFAULT_PAGE_REF))
+				.findFirst();
+	}
+
 }

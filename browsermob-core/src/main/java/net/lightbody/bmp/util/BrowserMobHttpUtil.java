@@ -9,12 +9,14 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import net.lightbody.bmp.exception.DecompressionException;
 import net.lightbody.bmp.exception.UnsupportedCharsetException;
+import org.brotli.dec.BrotliInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -78,11 +80,11 @@ public class BrowserMobHttpUtil {
 	/**
 	 * Decompresses the gzipped byte stream.
 	 *
-	 * @param fullMessage gzipped byte stream to decomress
+	 * @param fullMessage gzipped byte stream to decompress
 	 * @return decompressed bytes
 	 * @throws DecompressionException thrown if the fullMessage cannot be read or decompressed for any reason
 	 */
-	public static byte[] decompressContents(byte[] fullMessage) throws DecompressionException {
+	public static byte[] decompressGZIPContents(byte[] fullMessage) throws DecompressionException {
 		InflaterInputStream gzipReader = null;
 		ByteArrayOutputStream uncompressed;
 		try {
@@ -112,6 +114,41 @@ public class BrowserMobHttpUtil {
 	}
 
 	/**
+	 * Decompresses the brotli byte stream
+	 *
+	 * @param fullMessage brotli byte stream to decompress
+	 * @return decompressed bytes
+	 * @throws DecompressionException thrown if the fullMessage cannot be read or decompressed for any reason
+	 */
+	public static byte[] decompressBrotliContents(byte[] fullMessage) throws DecompressionException {
+		InputStream brotliReader = null;
+		ByteArrayOutputStream uncompressed;
+		try {
+			brotliReader = new BrotliInputStream(new ByteArrayInputStream(fullMessage));
+
+			uncompressed = new ByteArrayOutputStream(fullMessage.length);
+
+			byte[] decompressBuffer = new byte[DECOMPRESS_BUFFER_SIZE];
+			int bytesRead;
+			while ((bytesRead = brotliReader.read(decompressBuffer)) > -1) {
+				uncompressed.write(decompressBuffer, 0, bytesRead);
+			}
+
+			fullMessage = uncompressed.toByteArray();
+		} catch (IOException e) {
+			throw new DecompressionException("Unable to decompress response", e);
+		} finally {
+			try {
+				if (brotliReader != null) {
+					brotliReader.close();
+				}
+			} catch (IOException e) {
+				log.warn("Unable to close brotli stream", e);
+			}
+		}
+		return fullMessage;
+	}
+	/**
 	 * Returns true if the content type string indicates textual content. Currently these are any Content-Types that start with one of the
 	 * following:
 	 * <pre>
@@ -133,7 +170,8 @@ public class BrowserMobHttpUtil {
 						contentType.startsWith("application/javascript") ||
 						contentType.startsWith("application/json") ||
 						contentType.startsWith("application/xml") ||
-						contentType.startsWith("application/xhtml+xml")
+						contentType.startsWith("application/xhtml+xml") ||
+						(contentType.startsWith("application/") && contentType.endsWith("+json"))
 				);
 	}
 
