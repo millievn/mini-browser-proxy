@@ -27,7 +27,7 @@ jobs:
           cat <(echo -e "${{ secrets.GPG_SECRET }}") | gpg --batch --import
       - name: Deploy
         run: |
-          mvn -P gpg_verify \
+          mvn -P release \
             --no-transfer-progress \
             --batch-mode -Dgpg.passphrase=${{ secrets.GPG_PASSWORD }} \
             --file pom.xml -s release/m2-settings.xml verify deploy
