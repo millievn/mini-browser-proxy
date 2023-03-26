@@ -108,7 +108,7 @@ public class BrowserMobProxyUtil {
 	private static String readVersionFileOnClasspath() {
 		String versionString;
 		try {
-			versionString = ClasspathResourceUtil.classpathResourceToString(VERSION_CLASSPATH_RESOURCE, StandardCharsets.UTF_8);
+			versionString = BrowserMobProxyUtil.class.getPackage().getImplementationVersion();
 		} catch (UncheckedIOException e) {
 			log.debug("Unable to load version from classpath resource: {}", VERSION_CLASSPATH_RESOURCE, e);
 			return UNKNOWN_VERSION_STRING;

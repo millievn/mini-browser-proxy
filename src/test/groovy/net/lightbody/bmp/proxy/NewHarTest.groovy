@@ -21,7 +21,7 @@ import org.mockserver.model.Header
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
-import static org.hamcrest.Matchers.*
+import static org.hamcrest.CoreMatchers.*
 import static org.junit.Assert.*
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when

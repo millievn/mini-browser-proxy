@@ -33,8 +33,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.junit.Assert.*;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
@@ -426,7 +426,7 @@ public class InterceptorTest extends MockServerTest {
 		proxy.addRequestFilter(new RequestFilter() {
 			@Override
 			public HttpResponse filterRequest(HttpRequest request, HttpMessageContents contents, HttpMessageInfo messageInfo) {
-				if (request.getUri().endsWith("/originalendpoint")) {
+				if (request.uri().endsWith("/originalendpoint")) {
 					request.setUri(request.getUri().replaceAll("originalendpoint", "modifiedendpoint"));
 				}
 

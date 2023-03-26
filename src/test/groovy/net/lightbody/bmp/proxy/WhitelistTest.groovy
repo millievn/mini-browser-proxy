@@ -15,7 +15,6 @@ import org.junit.After
 import org.junit.Test
 import org.mockserver.matchers.Times
 
-import static org.hamcrest.Matchers.isEmptyOrNullString
 import static org.junit.Assert.*
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
