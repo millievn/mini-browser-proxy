@@ -2,6 +2,8 @@
 
 > Fork of [BrowserMob Proxy ](https://github.com/LittleProxy/LittleProxy) as all forks and itself are deprecated.
 
+[![Maven Central Repo Deployment](https://github.com/qiwang97/mini-browser-proxy/actions/workflows/release.yaml/badge.svg)](https://github.com/qiwang97/mini-browser-proxy/actions/workflows/release.yaml)
+
 ## Changes since fork
 ### v2.2.0-release
 
