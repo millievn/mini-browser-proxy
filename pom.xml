@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.qiwang97</groupId>
     <artifactId>browsermob-core</artifactId>
-    <version>2.2.0-release</version>
+    <version>2.2.1-release</version>
     <packaging>jar</packaging>
 
     <name>BrowserMob Proxy Core (LittleProxy) Module</name>
@@ -68,7 +68,7 @@
         <!-- netty 4.1 version to use for browsermob-dist and when using the netty-4.1 profile -->
         <netty-4.1.version>4.1.15.Final</netty-4.1.version>
 
-        <bouncycastle.version>1.66</bouncycastle.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
 
         <unit-test-jetty.version>9.4.21.v20190926</unit-test-jetty.version>
         <skipTests>true</skipTests>
@@ -129,6 +129,18 @@
                         <source>1.8</source>
                         <target>1.8</target>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>default-testCompile</id>
+                            <phase>test-compile</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -256,6 +268,20 @@
             <groupId>xyz.rogfam</groupId>
             <artifactId>littleproxy</artifactId>
             <version>2.0.16</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-example</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
