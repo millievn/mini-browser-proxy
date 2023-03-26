@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.qiwang97</groupId>
     <artifactId>browsermob-core</artifactId>
-    <version>2.2.3-release</version>
+    <version>2.2.0-release</version>
     <packaging>jar</packaging>
 
     <name>BrowserMob Proxy Core (LittleProxy) Module</name>
